@@ -2,6 +2,8 @@ import subprocess
 import tempfile
 from dotenv import load_dotenv
 import os
+from gmssl import sm4
+from gmssl.sm4 import CryptSM4, SM4_DECRYPT
 
 # =============================================================================
 # 模块说明：SM4 国密对称分组密码算法封装（本项目通过 OpenSSL 命令行实现）
@@ -160,6 +162,40 @@ def sm4_decrypt(key, my_iv,ciphertext):
         
     return plaintext
 
+
+
+
+
+
+def sm4_encrypt_raw(key: bytes, iv: bytes, plaintext: bytes) -> bytes:
+    """
+    使用 gmssl 库进行 SM4-CBC 加密（PKCS7 填充）。
+    与前端 sm-crypto 行为一致，结果可复现。
+    """
+    if len(key) != 16 or len(iv) != 16:
+        raise ValueError("SM4 key 与 iv 必须为 16 字节")
+
+    cipher = sm4.CryptSM4()
+    cipher.set_key(key, sm4.SM4_ENCRYPT)
+    # crypt_cbc 方法会自动处理 PKCS7 填充
+    return cipher.crypt_cbc(iv, plaintext)
+
+
+def sm4_decrypt_raw(key: bytes, iv: bytes, ciphertext: bytes) -> bytes:
+    """
+    使用 gmssl 库进行 SM4-CBC 解密（自动去除 PKCS7 填充）。
+    """
+    if len(key) != 16 or len(iv) != 16:
+        raise ValueError("SM4 key 与 iv 必须为 16 字节")
+
+    cipher = CryptSM4()
+    cipher.set_key(key, SM4_DECRYPT)
+    return cipher.crypt_cbc(iv, ciphertext)
+
+
+
+
+
 # 测试代码
 if __name__ == '__main__':
     try:
@@ -183,7 +219,18 @@ if __name__ == '__main__':
             decrypted = sm4_decrypt(key,my_iv, encrypted)
             print(f"解密结果: {decrypted.decode()}")
             print(f"加解密验证: {'成功' if decrypted == test_data else '失败'}")
-            
+
+
+
+
+            print(f"下面测试库函数实现的sm4加解密")
+            encrypted = sm4_encrypt_raw(key, my_iv, test_data)
+            print(f"加密结果: {encrypted.hex()}")
+
+            decrypted = sm4_decrypt_raw(key, my_iv, encrypted)
+            print(f"解密结果: {decrypted.decode()}")
+            print(f"加解密验证: {'成功' if decrypted == test_data else '失败'}")
+
     except Exception as e:
         print(f"错误: {e}")
         print(f"请确保OpenSSL路径正确: {OPENSSL_PATH}")
