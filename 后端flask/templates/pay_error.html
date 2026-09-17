@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+  支付失败页面（Jinja2 模板）
+  由 pay_return.py 中 /pay/return 路由在"模拟银行"回跳且校验失败时
+  render_template('pay_error.html', ...) 渲染；展示错误标题与具体原因。
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>支付错误</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            padding: 40px;
+        }
+        .error-icon {
+            font-size: 80px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #3da8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="error-icon">✗</div>
+        <h2>{{ error_title }}</h2>
+        <p>{{ error_message }}</p>
+        <button class="btn" onclick="window.history.back()">返回</button>
+    </div>
+</body>
+</html>

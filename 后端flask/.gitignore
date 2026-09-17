@@ -1,0 +1,9 @@
+# 后端运行日志（logging_config.py 自动生成）
+logs/
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# 测试辅助脚本（如需保留可删掉本行）
+compute_totp.py

@@ -1,0 +1,99 @@
+/* ====================================================================
+   style.css —— 项目全局样式（对所有页面生效）
+   ====================================================================
+   内容分类：
+   1. :root 根变量区：字体、行高、颜色、背景等设计基调；
+   2. 基础标签样式：a 链接、body、h1 标题、button 按钮的默认外观；
+   3. 通用类样式：.card（卡片容器）；
+   4. 挂载点 #app：铺满整个视口，供根组件布局使用；
+   5. 媒体查询：当系统偏好浅色主题时，自动切换到浅色配色。
+   注意：单个 Vue 组件内部的局部样式写在各自的 <style scoped> 中，
+        不在此文件中，二者职责不同、互不影响。
+   ==================================================================== */
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* 支持浅色/深色两种配色方案（依据系统偏好） */
+  color-scheme: light dark;
+  /* 深色基调下的默认文字与背景色 */
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  /* 字体渲染优化选项 */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 链接：去掉下划线，悬停时变色 */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* body：重置外边距/内边距，限定最小宽度与整屏高度 */
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* 一级标题：放大字号，缩小行高 */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* 按钮：圆角、去默认边框、鼠标悬停描边的通用按钮样式 */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* 通用卡片容器类（页面需要卡片效果时可复用） */
+.card {
+  padding: 2em;
+}
+
+/* Vue 应用挂载点容器：占满整个视口（App 根布局基于此撑开） */
+#app {
+  width: 100%;
+  height: 100vh;
+}
+
+/* 系统偏好浅色主题时：覆盖为浅色文字与背景 */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

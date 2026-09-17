@@ -1,0 +1,37 @@
+<!--
+  ====================================================================
+  index.html —— Vite 项目的 HTML 入口模板（单页应用的“宿主页面”）
+  ====================================================================
+  说明：
+   1. 整个前端只有一个 HTML 文件，页面内容全部由 Vue 组件动态渲染
+      （属于 SPA 单页应用模式），后续页面切换只替换内容、不整页刷新；
+   2. <div id="app"> 是整个 Vue 应用唯一的挂载点：
+      src/main.js 通过 createApp(App).mount('#app') 把根组件挂载进来，
+      该节点的宽高样式定义在 src/style.css 的 #app 规则中；
+   3. <script type="module" src="/src/main.js"> 以 ES Module 方式加载
+      应用入口脚本，Vite 会从它开始递归编译并打包所有依赖；
+   4. <title> 决定浏览器标签页上显示的标题（此处仍为工程初始命名，
+      属纯展示信息，不影响功能）；
+   5. 页面语言属性 lang="en" 只是给浏览器的提示，不参与业务逻辑，
+      为保持工程原样此处不作改动。
+  ====================================================================
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- 页面字符编码：UTF-8，保证中文正常显示 -->
+    <meta charset="UTF-8" />
+    <!-- 浏览器标签页小图标（Vite 自带占位图标） -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- 视口设置：让页面在移动端按设备宽度自适应缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 浏览器标签页标题 -->
+    <title>v1-zhognshe-rebuild-3-vue</title>
+  </head>
+  <body>
+    <!-- Vue 应用挂载点：main.js 会把整个应用渲染进这个空 div -->
+    <div id="app"></div>
+    <!-- 入口脚本：以 ES Module 方式加载 /src/main.js -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
