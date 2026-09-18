@@ -2,6 +2,9 @@ import subprocess
 import tempfile
 from dotenv import load_dotenv
 import os
+from gmssl import sm2 as gmssl_sm2, func
+import re
+import base64
 '''
 注意
 sm2使用byte的格式
@@ -281,35 +284,156 @@ def sm2_verify(public_key, data, signature):
     # OpenSSL 约定：验签通过时退出码为 0、失败时非 0，这里直接映射成布尔值返回
     return result.returncode == 0
 
+
+
+
+# =============================================================================
+# 基于 gmssl 库的 SM2 接口（安全隧道专用，hex 密钥，裸格式）
+# -----------------------------------------------------------------------------
+# 与旧接口的分工：
+#   旧接口（sm2_encrypt/sm2_decrypt）：PEM 密钥 + OpenSSL 命令行 + DER 格式
+#                                       —— 银行联调继续用，一行都不动
+#   新接口（本段）：hex 密钥 + gmssl 库 + 裸格式 04||x||y||C3||C2
+#                                       —— 与前端 sm-crypto 完全兼容
+# =============================================================================
+
+from gmssl import sm2 as gmssl_sm2
+
+
+def gmssl_sm2_generate_keypair():
+    """
+    使用 gmssl 库生成 SM2 十六进制密钥对（安全隧道专用）。
+
+    Returns:
+        tuple: (private_key_hex, public_key_hex)
+               private_key_hex: 64 字符（32 字节）
+               public_key_hex:  128 字符（x||y，无 04 前缀）
+    """
+    # 私钥：32 字节随机
+    private_key_hex = os.urandom(32).hex()
+
+    # 公钥：P = d * G，用 gmssl 内部的点乘
+    sm2_crypt = gmssl_sm2.CryptSM2(public_key='', private_key=private_key_hex)
+    public_key_hex = sm2_crypt._kg(
+        int(private_key_hex, 16),
+        gmssl_sm2.default_ecc_table['g']
+    )
+    return private_key_hex, public_key_hex
+
+
+def gmssl_sm2_encrypt_raw(public_key_hex: str, plaintext: bytes) -> bytes:
+    """
+    SM2 加密，输出裸格式 04||x||y||C3||C2，与前端 sm-crypto 兼容。
+
+    注：不同 gmssl 版本在 asn1=False 时的输出不一致：
+        - 有的版本输出 04||x||y||C3||C2（97 + len(pt)）
+        - 有的版本输出    x||y||C3||C2（96 + len(pt)）
+        本函数统一为带 04 前缀的形式。
+    """
+    if public_key_hex.startswith('04'):
+        public_key_hex = public_key_hex[2:]
+    if len(public_key_hex) != 128:
+        raise ValueError(f"公钥长度异常：{len(public_key_hex)}（应为 128）")
+
+    sm2_crypt = gmssl_sm2.CryptSM2(
+        public_key=public_key_hex,
+        private_key='',
+        asn1=False
+    )
+    raw = sm2_crypt.encrypt(plaintext)
+
+    # —— 规范化：按长度判断是否缺 04 ——
+    expected_with_prefix    = 97 + len(plaintext)
+    expected_without_prefix = 96 + len(plaintext)
+
+    if len(raw) == expected_without_prefix:
+        raw = b'\x04' + raw
+    elif len(raw) != expected_with_prefix:
+        raise ValueError(
+            f"密文长度异常：{len(raw)}，"
+            f"期望 {expected_with_prefix} 或 {expected_without_prefix}"
+        )
+    return raw
+
+
+def gmssl_sm2_decrypt_raw(private_key_hex: str, ciphertext: bytes) -> bytes:
+    """
+    SM2 解密，输入裸格式（可带或不带 04 前缀）。
+
+    gmssl 在 asn1=False 时的 decrypt 期望输入不带 04，因此这里统一去掉。
+    """
+    if len(private_key_hex) != 64:
+        raise ValueError(f"私钥长度异常：{len(private_key_hex)}（应为 64）")
+
+    # —— 去掉 04 前缀（如果存在）——
+    # 注意：如果密文恰好不带 04 而 x[0] 又是 0x04，会有 1/256 的误判概率。
+    # 但因为我们的 encrypt_raw 总是输出带 04 的格式，前端 sm-crypto 也是，
+    # 所以实际不会遇到裸 x[0]=0x04 的输入。
+    if ciphertext.startswith(b'\x04') and len(ciphertext) >= 97:
+        ciphertext = ciphertext[1:]
+
+    sm2_crypt = gmssl_sm2.CryptSM2(
+        public_key='',
+        private_key=private_key_hex,
+        asn1=False
+    )
+    return sm2_crypt.decrypt(ciphertext)
+
+
 if __name__ == '__main__':
     try:
-        if not os.path.exists(OPENSSL_PATH):
+        # ============ 旧接口（OpenSSL + PEM + DER）============
+        if not os.path.exists(OPENSSL_PATH or ""):
             print(f"错误: OpenSSL路径不存在: {OPENSSL_PATH}")
         else:
-            # 生成密钥对
-            print("生成SM2密钥对...")
-            sk, pk = generate_sm2_keypair()
-            print("密钥对生成成功")
-            
-            # 测试加解密
+            print("=" * 60)
+            print("【A】旧接口：OpenSSL + PEM + DER（银行联调用，未改）")
+            print("=" * 60)
+
+            sk_pem, pk_pem = generate_sm2_keypair()
             test_data = b"Hello, SM2!"
-            print(f"\n测试数据: {test_data.decode()}")
-            
-            encrypted = sm2_encrypt(pk, test_data)
-            print(f"加密结果: {encrypted.hex()[:50]}...")
-            
-            decrypted = sm2_decrypt(sk, encrypted)
-            print(f"解密结果: {decrypted.decode()}")
-            print(f"加解密验证: {'成功' if decrypted == test_data else '失败'}")
-            
-            # 测试签名验证
-            signature = sm2_sign(sk, test_data)
-            print(f"\n签名结果: {signature.hex()[:50]}...")
-            
-            verify_result = sm2_verify(pk, test_data, signature)
-            print(f"签名验证: {'成功' if verify_result else '失败'}")
-            
+
+            der_ct = sm2_encrypt(pk_pem, test_data)
+            print(f"DER 密文长度: {len(der_ct)}，首字节: 0x{der_ct[0]:02x}")
+            der_pt = sm2_decrypt(sk_pem, der_ct)
+            print(f"解密结果: {der_pt.decode()}")
+            print(f"往返验证: {'✅' if der_pt == test_data else '❌'}")
+
+        # ============ 新接口（gmssl 库 + hex + 裸格式）============
+        print()
+        print("=" * 60)
+        print("【B】新接口：gmssl + hex + 裸格式（安全隧道）")
+        print("=" * 60)
+
+        priv_hex, pub_hex = gmssl_sm2_generate_keypair()
+        print(f"私钥 hex（{len(priv_hex)} 字符）: {priv_hex}")
+        print(f"公钥 hex（{len(pub_hex)} 字符）: {pub_hex}")
+
+        test_data = b"Hello, SM2!"
+        raw_ct = gmssl_sm2_encrypt_raw(pub_hex, test_data)
+        print(f"\n裸密文长度: {len(raw_ct)}（应 = 97 + {len(test_data)} = {97 + len(test_data)}）")
+        print(f"裸密文首字节: 0x{raw_ct[0]:02x}（应为 0x04）")
+        print(f"裸密文前 20 字节: {raw_ct[:20].hex()}")
+
+        raw_pt = gmssl_sm2_decrypt_raw(priv_hex, raw_ct)
+        print(f"\n解密结果: {raw_pt.decode()}")
+        print(f"往返验证: {'✅ 成功' if raw_pt == test_data else '❌ 失败'}")
+
+        # 边界：多长度明文
+        print("\n不同长度明文往返：")
+        ok = 0
+        for n in [1, 15, 16, 17, 32, 100, 1024]:
+            msg = os.urandom(n)
+            ct = gmssl_sm2_encrypt_raw(pub_hex, msg)
+            pt = gmssl_sm2_decrypt_raw(priv_hex, ct)
+            if pt == msg and len(ct) == 97 + n and ct[0] == 0x04:
+                ok += 1
+                print(f"  明文 {n:>5} 字节 → 密文 {len(ct):>5} 字节  ✅")
+            else:
+                print(f"  明文 {n:>5} 字节 → 密文 {len(ct):>5} 字节  ❌")
+        print(f"通过: {ok}/7")
+
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"错误: {e}")
-        print(f"请确保OpenSSL路径正确: {OPENSSL_PATH}")
-        print("请确保系统已安装支持SM2的OpenSSL版本（1.1.1及以上）")
