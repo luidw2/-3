@@ -25,6 +25,7 @@ from .jwt_auth import jwt_auth_required
 from .param_validation import validate_params, sanitize_input
 from .rate_limit import rate_limit
 from .security_headers import security_headers
+from .secure_tunnel import tunnel_required
 from .permissions import seller_required, user_required, admin_required, auditor_required, staff_required
 
 # __all__ 声明 “from app.middleware import *” 实际导出的名字，
@@ -35,6 +36,7 @@ __all__ = [
     'sanitize_input',
     'rate_limit',
     'security_headers',
+    'tunnel_required',
     'seller_required',
     'user_required',
     'admin_required',

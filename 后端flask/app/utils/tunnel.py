@@ -1,3 +1,45 @@
+# -*- coding: utf-8 -*-
+"""
+app/utils/tunnel.py —— 安全隧道（课堂 Demo 简化版）
+=============================================================================
+只做老师要求的三件事，够用就行：
+
+  1) SM4 加密 Body        —— seal_body() / open_body()
+  2) SM2 封装会话密钥      —— make_envelope() / open_envelop()
+  3) Nonce 与时间窗校验    —— check_ts() / check_nonce()
+
+线上报文：整个请求体就是一个 JSON，里面两段 base64。
+信封放在 body 的字段里而不是自定义 HTTP 头里，好处是不用改任何 CORS 配置。
+
+    POST /user/login
+    Content-Type: application/json
+
+    {"env":  "base64( SM2加密(后端公钥, keyblob) )",
+     "data": "base64( SM4-CBC(会话密钥, IV, 明文JSON) )"}
+
+    keyblob = {"key":"32位hex","iv":"32位hex","nonce":"32位hex","ts":毫秒}
+    —— 这一小段 JSON 只有持后端私钥的人能拆开。
+
+服务端拆包流程（open_request 内部，就四步）：
+
+    拆 JSON 取信封 → 拆信封(SM2) → 校验时间戳 + nonce → 解密 data(SM4)
+
+为什么 nonce / ts 要放在信封里面：
+    这两个是防重放用的（同一个包重发要能拒掉）。如果放在明文位置，攻击者重放
+    抓到的包时只要把 nonce 换成新的、ts 刷成当前时间就绕过去了；放进信封后它们
+    随信封一起被加密，改不了。这就是本 Demo 的核心设计点。
+
+前端（sm-crypto）对接时必须注意：
+    本项目 SM2.py 用的是 gmssl 的默认顺序 C1‖C2‖C3，所以前端要写成
+        sm2.doEncrypt(明文, 后端公钥, 0)
+        sm2.doDecrypt(密文, 自己私钥, 0)
+    最后那个 0 是 cipherMode=0。如果照网上例子写成默认的 1，会解出乱码，
+    而且两种顺序的密文长度完全一样，很难看出问题。
+
+自测：在后端flask 目录执行  .venv\\Scripts\\python.exe -m app.utils.tunnel
+=============================================================================
+"""
+
 import base64
 import json
 import os
@@ -21,27 +63,25 @@ FLASK_PRIVATE_KEY = os.getenv('SM2_FLASK_PRIVATE_KEY')    # 后端拆请求信�
 # =============================================================================
 # 协议常量与参数
 # =============================================================================
-HEADER_ENV = 'X-Tunnel-Env'              # 请求信封头
-HEADER_ENV_RESP = 'X-Tunnel-Env-Resp'    # 响应信封头
+FIELD_ENV = 'env'        # 报文里放 SM2 信封的字段
+FIELD_DATA = 'data'      # 报文里放 SM4 密文的字段
 
 TS_WINDOW_MS = int(os.getenv('TUNNEL_TS_WINDOW_MS', '300000'))   # 时间窗 ±5 分钟
 NONCE_TTL_S = int(os.getenv('TUNNEL_NONCE_TTL_S', '600'))        # nonce 记住 10 分钟
 
-# 错误码 -> HTTP 状态码（拦截器直接拿来构造响应）
-ERR_HEADER = 'TUNNEL_HEADER_MISSING'
+# 错误码 -> HTTP 状态码（装饰器直接拿来构造响应）
+ERR_PACK = 'TUNNEL_BAD_PACKET'
 ERR_UNWRAP = 'TUNNEL_UNWRAP_FAILED'
 ERR_TS = 'TUNNEL_TS_EXPIRED'
 ERR_REPLAY = 'TUNNEL_REPLAY'
 ERR_BODY = 'TUNNEL_BODY_DECRYPT_FAILED'
-HTTP_STATUS = {ERR_HEADER: 401, ERR_UNWRAP: 400, ERR_TS: 401, ERR_REPLAY: 409, ERR_BODY: 400}
+HTTP_STATUS = {ERR_PACK: 400, ERR_UNWRAP: 400, ERR_TS: 401, ERR_REPLAY: 409, ERR_BODY: 400}
 
 
 class TunnelError(Exception):
-    """隧道校验失败。拦截器里这样用：
+    """隧道校验失败。装饰器里这样用：
 
-        try:
-            plaintext = tunnel.open_request(request.headers, request.get_data())
-        except TunnelError as e:
+        except tunnel.TunnelError as e:
             return jsonify(e.to_dict()), e.http_status
     """
 
@@ -60,6 +100,7 @@ class TunnelError(Exception):
 # =============================================================================
 def make_envelope(plain_envelop: bytes, public_key_hex: str = None) -> bytes:
     """用对方公钥把 keyblob 封成信封，返回裸格式 04‖x‖y‖C3‖C2。
+
     缺省用前端公钥 —— 即「后端回包给前端」这个方向。
     客户端脚本要模拟"前端发请求"时，显式传 FLASK_PUBLIC_KEY。
     """
@@ -88,7 +129,7 @@ def seal_body(body: bytes, key: bytes, iv: bytes) -> bytes:
 
 
 def open_body(body_b64, key: bytes, iv: bytes) -> bytes:
-    """把 base64 的密文 body 还原成明文。
+    """把 base64 的密文还原成明文。
 
     没有 body 就直接返回空（GET 类接口本来就没有请求体）。
     解不开时统一报 TUNNEL_BODY_DECRYPT_FAILED，不把底层异常细节暴露出去。
@@ -141,16 +182,39 @@ def check_nonce(nonce: str, now: float = None) -> bool:
 
 
 # =============================================================================
-# 四、总入口：封包 / 拆包
+# 四、报文打包 / 拆包
 # =============================================================================
-def _get(headers, name):
-    """从 dict 或 Flask 的 Headers 对象里取一个头（两者都支持 .get）。"""
+def pack(envelope: bytes, data_b64: bytes) -> bytes:
+    """把信封和密文打包成整个 body：{"env": "...", "data": "..."}。"""
+    return json.dumps({
+        FIELD_ENV: base64.b64encode(envelope).decode('ascii'),
+        FIELD_DATA: data_b64.decode('ascii'),
+    }).encode('utf-8')
+
+
+def unpack(body) -> tuple:
+    """从 body 里取出 (信封 bytes, 密文 base64 bytes)。
+
+    任何格式问题（不是 JSON、缺字段、base64 非法）都报 TUNNEL_BAD_PACKET。
+    """
+    if isinstance(body, (bytes, bytearray)):
+        try:
+            body = bytes(body).decode('utf-8')
+        except UnicodeDecodeError:
+            raise TunnelError(ERR_PACK, '请求体不是 UTF-8 文本')
     try:
-        return headers.get(name)
-    except AttributeError:
-        return None
+        obj = json.loads(body)
+        envelope = base64.b64decode(obj[FIELD_ENV])
+        data_b64 = obj[FIELD_DATA].encode('ascii')
+    except Exception:
+        raise TunnelError(ERR_PACK,
+                          f'不是合法的隧道包（需要 {FIELD_ENV} 和 {FIELD_DATA} 两个字段）')
+    return envelope, data_b64
 
 
+# =============================================================================
+# 五、总入口：封包 / 拆包
+# =============================================================================
 def build_keyblob(now_ms=None) -> dict:
     """生成一次性的：会话密钥 + IV + nonce + 时间戳。"""
     return {
@@ -161,24 +225,20 @@ def build_keyblob(now_ms=None) -> dict:
     }
 
 
-def _seal(plaintext: bytes, header_name: str, public_key_hex: str, now_ms=None):
-    """封包：生成 keyblob → SM2 封信封 → SM4 加密 body。"""
+def _seal(plaintext: bytes, public_key_hex: str, now_ms=None) -> bytes:
+    """封包：生成 keyblob → SM2 封信封 → SM4 加密 → 打包成 JSON body。"""
     blob = build_keyblob(now_ms)
     key, iv = bytes.fromhex(blob['key']), bytes.fromhex(blob['iv'])
     envelope = SM2.gmssl_sm2_encrypt_raw(public_key_hex, json.dumps(blob).encode('utf-8'))
-    headers = {header_name: base64.b64encode(envelope).decode('ascii')}
-    return headers, seal_body(plaintext, key, iv)
+    return pack(envelope, seal_body(plaintext, key, iv))
 
 
-def _open(headers, body, header_name: str, private_key_hex: str, now_ms=None) -> bytes:
-    """拆包：拆信封(SM2) → 校验时间戳 → 校验 nonce → 解密 body(SM4)。"""
-    env_b64 = _get(headers, header_name)
-    if not env_b64:
-        raise TunnelError(ERR_HEADER, f'缺少 {header_name} 头')
+def _open(body, private_key_hex: str, now_ms=None) -> bytes:
+    """拆包：拆 JSON → 拆信封(SM2) → 校验时间戳 + nonce → 解密 data(SM4)。"""
+    envelope, data_b64 = unpack(body)
 
     # 拆信封 + 取出 keyblob（任何一步出错都算信封无效）
     try:
-        envelope = base64.b64decode(env_b64)
         blob = json.loads(SM2.gmssl_sm2_decrypt_raw(private_key_hex, envelope).decode('utf-8'))
         key = bytes.fromhex(blob['key'])
         iv = bytes.fromhex(blob['iv'])
@@ -190,36 +250,36 @@ def _open(headers, body, header_name: str, private_key_hex: str, now_ms=None) ->
     check_ts(ts, now_ms)
     if not check_nonce(nonce):
         raise TunnelError(ERR_REPLAY, 'nonce 重复（重放请求）')
-    return open_body(body, key, iv)
+    return open_body(data_b64, key, iv)
 
 
-def seal_request(plaintext: bytes, now_ms=None, public_key_hex=None):
-    """客户端 -> 服务端：封一次请求，返回 (headers, body)。用后端公钥封信封。"""
-    return _seal(plaintext, HEADER_ENV, public_key_hex or FLASK_PUBLIC_KEY, now_ms)
+def seal_request(plaintext: bytes, now_ms=None, public_key_hex=None) -> bytes:
+    """客户端 -> 服务端：把明文封成整个请求体。用后端公钥封信封。"""
+    return _seal(plaintext, public_key_hex or FLASK_PUBLIC_KEY, now_ms)
 
 
-def open_request(headers, body, private_key_hex=None, now_ms=None) -> bytes:
-    """服务端拆一次请求，返回解密后的明文 bytes。拦截器把它回填给 request 即可。"""
-    return _open(headers, body, HEADER_ENV, private_key_hex or FLASK_PRIVATE_KEY, now_ms)
+def open_request(body, private_key_hex=None, now_ms=None) -> bytes:
+    """服务端拆一次请求，返回明文 bytes。用后端私钥拆信封。"""
+    return _open(body, private_key_hex or FLASK_PRIVATE_KEY, now_ms)
 
 
-def seal_response(payload: bytes, now_ms=None, public_key_hex=None):
-    """服务端 -> 客户端：封一次响应，返回 (headers, body)。用前端公钥封信封。"""
-    return _seal(payload, HEADER_ENV_RESP, public_key_hex or VUE_PUBLIC_KEY, now_ms)
+def seal_response(payload: bytes, now_ms=None, public_key_hex=None) -> bytes:
+    """服务端 -> 客户端：把响应封成整个响应体。用前端公钥封信封。"""
+    return _seal(payload, public_key_hex or VUE_PUBLIC_KEY, now_ms)
 
 
-def open_response(headers, body, private_key_hex=None, now_ms=None) -> bytes:
+def open_response(body, private_key_hex=None, now_ms=None) -> bytes:
     """客户端拆一次响应（自测与命令行脚本用；浏览器里由 JS 实现）。"""
-    return _open(headers, body, HEADER_ENV_RESP, private_key_hex or VUE_PRIVATE_KEY, now_ms)
+    return _open(body, private_key_hex or VUE_PRIVATE_KEY, now_ms)
 
 
-def seal_json(obj, **kwargs):
+def seal_json(obj, **kwargs) -> bytes:
     """把 Python 对象转成 JSON 再封包，业务里最常用的入口。"""
     return seal_request(json.dumps(obj, ensure_ascii=False).encode('utf-8'), **kwargs)
 
 
 # =============================================================================
-# 五、自测：python -m app.utils.tunnel
+# 六、自测：python -m app.utils.tunnel
 # =============================================================================
 def _self_test():
     print('=' * 66)
@@ -236,46 +296,55 @@ def _self_test():
     print(f'[1] SM4 加解密      : {ct.hex()}（可复现，与 OpenSSL/sm-crypto 一致）')
 
     # 2) SM2 信封往返：明文 n 字节 -> 信封 97+n 字节
-    body = b'{"hello":"tunnel"}'
-    env = make_envelope(body, FLASK_PUBLIC_KEY)
-    assert len(env) == 97 + len(body), f'信封长度 {len(env)}'
-    assert open_envelop(env, FLASK_PRIVATE_KEY) == body
-    print(f'[2] SM2 封装/拆封   : 明文 {len(body)}B -> 信封 {len(env)}B（=97+明文）')
+    msg = b'{"hello":"tunnel"}'
+    env = make_envelope(msg, FLASK_PUBLIC_KEY)
+    assert len(env) == 97 + len(msg), f'信封长度 {len(env)}'
+    assert open_envelop(env, FLASK_PRIVATE_KEY) == msg
+    print(f'[2] SM2 封装/拆封   : 明文 {len(msg)}B -> 信封 {len(env)}B（=97+明文）')
 
     # 3) 完整请求往返
     now = int(time.time() * 1000)
     data = {'username': 'zhangsan', 'password': '123456', 'role': 'user'}
-    headers, wire = seal_json(data, now_ms=now)
-    got = open_request(headers, wire, now_ms=now)
+    wire = seal_json(data, now_ms=now)
+    assert FIELD_ENV in json.loads(wire.decode()), '报文里应该有 env 字段'
+    got = open_request(wire, now_ms=now)
     assert json.loads(got.decode('utf-8')) == data
-    print(f'[3] 请求封包/拆封   : body {len(wire)}B，明文还原一致')
+    print(f'[3] 请求封包/拆封   : 整个 body {len(wire)}B（一个 JSON 两个 base64 字段），明文一致')
 
     # 4) 重放：同一个包发第二次必须被拒
-    headers2, wire2 = seal_json(data, now_ms=now)
-    open_request(headers2, wire2, now_ms=now)          # 第一次通过
+    wire2 = seal_json(data, now_ms=now)
+    open_request(wire2, now_ms=now)                    # 第一次通过
     try:
-        open_request(headers2, wire2, now_ms=now)      # 第二次应被拒
+        open_request(wire2, now_ms=now)                # 第二次应被拒
         raise AssertionError('重放竟然通过了')
     except TunnelError as e:
         assert e.code == ERR_REPLAY, e.code
         print(f'[4] nonce 重放      : 第二次 -> {e.code}（HTTP {e.http_status}）')
 
     # 5) 时间窗：±299 秒通过，±301 秒被拒
-    headers3, wire3 = seal_json(data, now_ms=now)
+    wire3 = seal_json(data, now_ms=now)
     for drift, should_pass in ((299000, True), (-299000, True),
                                (301000, False), (-301000, False)):
         try:
-            open_request(headers3, wire3, now_ms=now + drift)
+            open_request(wire3, now_ms=now + drift)
             ok = True
         except TunnelError as e:
             ok = (e.code != ERR_TS)
         assert ok == should_pass, f'drift={drift}ms 期望 {should_pass}，实际 {ok}'
         print(f'[5] 时间窗 {drift:+8d}ms : {"通过" if ok else "被拒"}')
 
-    # 6) 响应方向
-    rh, rb = seal_response(b'{"code":0,"msg":"ok"}', now_ms=now)
-    assert open_response(rh, rb, now_ms=now) == b'{"code":0,"msg":"ok"}'
-    print('[6] 响应封包/拆封   : 正常')
+    # 6) 格式不对的包（比如旧前端直接发的明文 JSON）
+    try:
+        open_request(json.dumps({'username': 'x', 'password': 'y'}).encode())
+        raise AssertionError('非法包竟然通过了')
+    except TunnelError as e:
+        assert e.code == ERR_PACK, e.code
+        print(f'[6] 非法报文        : -> {e.code}（HTTP {e.http_status}）')
+
+    # 7) 响应方向
+    resp = seal_response(b'{"code":0,"msg":"ok"}', now_ms=now)
+    assert open_response(resp, now_ms=now) == b'{"code":0,"msg":"ok"}'
+    print('[7] 响应封包/拆封   : 正常')
 
     print()
     print('全部通过。三个机制都可用：SM4 加密 Body、SM2 封装会话密钥、Nonce+时间窗。')
