@@ -19,7 +19,7 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 
-from app.middleware import rate_limit
+from app.middleware import rate_limit, tunnel_required
 from app.utils import db, my_bcrypt, auth
 
 user = Blueprint('login', __name__)
@@ -57,6 +57,7 @@ def build_response(code, message='', data=None, error=None, status=200):
 # ----------------------------------------------------------------------------
 @user.route('/user/login', methods=['POST'])
 @rate_limit(max_requests=100, window_seconds=60, per_ip=True)
+@tunnel_required          # 走安全隧道：请求解密、响应加密（视图函数本身不用改）
 def login():
     # 注：下方遗留的 """ """ 为早期"表单传参"版本的旧说明（已过时），
     # 新版已改为解析 JSON 请求体，此处保留仅供对照参考、不影响任何逻辑。

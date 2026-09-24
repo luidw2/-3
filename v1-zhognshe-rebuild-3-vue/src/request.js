@@ -11,6 +11,8 @@
  */
 import axios from "axios";
 import {message} from "ant-design-vue";
+// 安全隧道：请求体加密 / 响应解密（实现见 src/utils/sm-tunnel.js）
+import { sealRequest, openResponse, isTunnelUrl } from './utils/sm-tunnel';
 
 // 后端接口基础地址：本地开发时直连本机 Flask 服务
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
@@ -37,7 +39,7 @@ const myAxios = axios.create({
   headers: {'X-Custom-Header': 'foobar'}    // 预留的自定义请求头
 });
 
-// ---------- 请求拦截器：每次发请求前自动携带登录令牌 ----------
+// ---------- 请求拦截器：自动携带登录令牌 + 对隧道接口加密请求体 ----------
 myAxios.interceptors.request.use(function (config) {
     // 从 localStorage 读取 JWT（登录成功时由下面的响应拦截器写入）
     const token = localStorage.getItem('token');
@@ -45,16 +47,24 @@ myAxios.interceptors.request.use(function (config) {
       // 后端通过 Authorization: Bearer <token> 识别当前用户（见后端 jwt_auth 中间件）
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // 挂了 @tunnel_required 的接口：把请求体封成隧道包 {"env":..., "data":...}
+    // （哪些接口走隧道见 src/utils/sm-tunnel.js 里的 TUNNEL_URLS）
+    if (isTunnelUrl(config.url)) {
+      config.data = sealRequest(config.data || {});
+      config.headers['Content-Type'] = 'application/json';
+    }
     return config;
   }, function (error) {
     // 请求构造阶段出错（如配置非法），直接抛给调用方处理
     return Promise.reject(error);
   });
 
-// ---------- 响应拦截器：统一处理"登录成功保存 token"与"401 未登录跳转" ----------
+// ---------- 响应拦截器：解密隧道响应 + 保存 token + 401 跳转 ----------
 myAxios.interceptors.response.use(function (response) {
     // HTTP 2xx 都会进入这里
-    // 登录接口成功（code === 0）时把 access_token 保存到 localStorage
+    // ① 如果响应体是隧道包（带 env 字段）就解密；普通接口的响应原样返回
+    response.data = openResponse(response.data);
+    // ② 登录接口成功（code === 0）时把 access_token 保存到 localStorage
     if (response.config.url === '/user/login' && response.data.code === 0) {
       if (response.data.data && response.data.data.access_token) {
         localStorage.setItem('token', response.data.data.access_token);
@@ -63,6 +73,16 @@ myAxios.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
     // 非 2xx 响应或网络错误进入这里
+    const body = error.response && error.response.data;
+    const code = body && body.code;
+
+    // 隧道自身的错误（重放 409 / 时间戳过期 401 / 报文不合法 400 …）：
+    // 这时后端返回的是一段明文说明，直接提示用户，别当成"登录过期"把人踢去登录页
+    if (typeof code === 'string' && code.startsWith('TUNNEL_')) {
+      message.error(`安全隧道校验失败：${body.message || code}`);
+      return Promise.reject(error);
+    }
+
     if (error.response && error.response.status === 401) {
       // 401 未授权：token 缺失/过期，清除本地 token 并跳回对应登录页
       // 后台账号（staff/admin/auditor 路径）跳后台登录页，前台用户跳用户登录页
