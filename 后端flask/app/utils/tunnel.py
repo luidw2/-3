@@ -1,42 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-app/utils/tunnel.py —— 安全隧道（课堂 Demo 简化版）
+app/utils/tunnel.py —— 安全隧道（课堂 Demo）
 =============================================================================
-只做老师要求的三件事，够用就行：
+线上报文（整个请求体就是一个 JSON，两个字段都是 base64）：
 
-  1) SM4 加密 Body        —— seal_body() / open_body()
-  2) SM2 封装会话密钥      —— make_envelope() / open_envelop()
-  3) Nonce 与时间窗校验    —— check_ts() / check_nonce()
+    请求: {"env":  "base64( SM2加密(后端公钥, keyblob) )",
+           "data": "base64( SM4-CBC(会话密钥, IV, 明文JSON) )"}
+    响应: 同样两个字段，信封改用前端公钥加密
 
-线上报文：整个请求体就是一个 JSON，里面两段 base64。
-信封放在 body 的字段里而不是自定义 HTTP 头里，好处是不用改任何 CORS 配置。
+    keyblob = {"key","iv","nonce","ts"}  ← 只有持对应私钥的一方能拆开
 
-    POST /user/login
-    Content-Type: application/json
+服务端拆包就四步：拆 JSON → 拆信封(SM2) → 校验时间戳 + nonce → 解密 data(SM4)
 
-    {"env":  "base64( SM2加密(后端公钥, keyblob) )",
-     "data": "base64( SM4-CBC(会话密钥, IV, 明文JSON) )"}
+为什么 nonce / ts 要放在信封里面：它们是防重放用的（同一个包重发要能拒掉）。
+放在明文位置，攻击者重放时改成新的就绕过去了；放进信封里改不动。
 
-    keyblob = {"key":"32位hex","iv":"32位hex","nonce":"32位hex","ts":毫秒}
-    —— 这一小段 JSON 只有持后端私钥的人能拆开。
-
-服务端拆包流程（open_request 内部，就四步）：
-
-    拆 JSON 取信封 → 拆信封(SM2) → 校验时间戳 + nonce → 解密 data(SM4)
-
-为什么 nonce / ts 要放在信封里面：
-    这两个是防重放用的（同一个包重发要能拒掉）。如果放在明文位置，攻击者重放
-    抓到的包时只要把 nonce 换成新的、ts 刷成当前时间就绕过去了；放进信封后它们
-    随信封一起被加密，改不了。这就是本 Demo 的核心设计点。
-
-前端（sm-crypto）对接时必须注意：
-    本项目 SM2.py 用的是 gmssl 的默认顺序 C1‖C2‖C3，所以前端要写成
-        sm2.doEncrypt(明文, 后端公钥, 0)
-        sm2.doDecrypt(密文, 自己私钥, 0)
-    最后那个 0 是 cipherMode=0。如果照网上例子写成默认的 1，会解出乱码，
-    而且两种顺序的密文长度完全一样，很难看出问题。
-
-自测：在后端flask 目录执行  .venv\\Scripts\\python.exe -m app.utils.tunnel
+自测：在本目录（后端flask）执行  .venv\\Scripts\\python.exe -m app.utils.tunnel
 =============================================================================
 """
 
@@ -56,7 +35,7 @@ load_dotenv()
 # 密钥（来自 .env）：Vue 侧一对、Flask 侧一对
 # =============================================================================
 VUE_PUBLIC_KEY = os.getenv('SM2_VUE_PUBLIC_KEY')          # 后端给前端回包时，用前端公钥封信封
-VUE_PRIVATE_KEY = os.getenv('SM2_VUE_PRIVATE_KEY')        # 自测与客户端脚本用
+VUE_PRIVATE_KEY = os.getenv('SM2_VUE_PRIVATE_KEY')        # 自测用（浏览器里由 JS 持有）
 FLASK_PUBLIC_KEY = os.getenv('SM2_FLASK_PUBLIC_KEY')      # 前端给后端发请求时，用后端公钥封信封
 FLASK_PRIVATE_KEY = os.getenv('SM2_FLASK_PRIVATE_KEY')    # 后端拆请求信封时用
 
@@ -96,42 +75,21 @@ class TunnelError(Exception):
 
 
 # =============================================================================
-# 一、SM2 信封（对应要求 2：SM2 封装会话密钥）
-# =============================================================================
-def make_envelope(plain_envelop: bytes, public_key_hex: str = None) -> bytes:
-    """用对方公钥把 keyblob 封成信封，返回裸格式 04‖x‖y‖C3‖C2。
-
-    缺省用前端公钥 —— 即「后端回包给前端」这个方向。
-    客户端脚本要模拟"前端发请求"时，显式传 FLASK_PUBLIC_KEY。
-    """
-    public_key_hex = VUE_PUBLIC_KEY if public_key_hex is None else public_key_hex
-    return SM2.gmssl_sm2_encrypt_raw(public_key_hex, plain_envelop)
-
-
-def open_envelop(enc_envelop: bytes, private_key_hex: str = None) -> bytes:
-    """用自己的私钥拆开信封，拿到 keyblob 明文。
-
-    缺省用后端私钥 —— 即「后端拆前端请求」这个方向。
-    """
-    private_key_hex = FLASK_PRIVATE_KEY if private_key_hex is None else private_key_hex
-    return SM2.gmssl_sm2_decrypt_raw(private_key_hex, enc_envelop)
-
-
-# =============================================================================
-# 二、SM4 body（对应要求 1：SM4 加密 Body）
+# 一、SM4 加密 body（要求 1）
 # =============================================================================
 def seal_body(body: bytes, key: bytes, iv: bytes) -> bytes:
     """SM4 加密 body，返回密文的 base64（线上形态）。
 
-    用 base64 而不是 hex：体积小 1/3，且是纯文本，抓包看着方便。
+    实测与 OpenSSL / 前端 sm-crypto 结果逐字节相同：
+        key = iv = 000102030405060708090a0b0c0d0e0f，明文 "AAAAAAA"
+        -> 38601c5b95f1c60be75f7e103a0e0a74
     """
     return base64.b64encode(SM4.sm4_encrypt_raw(key, iv, body))
 
 
 def open_body(body_b64, key: bytes, iv: bytes) -> bytes:
-    """把 base64 的密文还原成明文。
+    """把 base64 的密文还原成明文；没有 body 就当空明文（GET 类接口）。
 
-    没有 body 就直接返回空（GET 类接口本来就没有请求体）。
     解不开时统一报 TUNNEL_BODY_DECRYPT_FAILED，不把底层异常细节暴露出去。
     """
     if isinstance(body_b64, str):
@@ -145,7 +103,7 @@ def open_body(body_b64, key: bytes, iv: bytes) -> bytes:
 
 
 # =============================================================================
-# 三、Nonce 与时间窗（对应要求 3）
+# 二、Nonce 与时间窗（要求 3）
 # =============================================================================
 def check_ts(ts_ms, now_ms=None, window_ms=None):
     """时间窗校验：|现在 - ts| 不超过允许窗口才算新鲜。
@@ -182,7 +140,7 @@ def check_nonce(nonce: str, now: float = None) -> bool:
 
 
 # =============================================================================
-# 四、报文打包 / 拆包
+# 三、报文打包 / 拆包
 # =============================================================================
 def pack(envelope: bytes, data_b64: bytes) -> bytes:
     """把信封和密文打包成整个 body：{"env": "...", "data": "..."}。"""
@@ -213,22 +171,18 @@ def unpack(body) -> tuple:
 
 
 # =============================================================================
-# 五、总入口：封包 / 拆包
+# 四、封包 / 拆包（总入口）
 # =============================================================================
-def build_keyblob(now_ms=None) -> dict:
-    """生成一次性的：会话密钥 + IV + nonce + 时间戳。"""
-    return {
-        'key': os.urandom(16).hex(),      # SM4 会话密钥
+def _seal(plaintext: bytes, public_key_hex: str, now_ms=None) -> bytes:
+    """封包：生成会话密钥/nonce/ts → SM2 封信封（要求 2）→ SM4 加密 → 打包。"""
+    blob = {
+        'key': os.urandom(16).hex(),      # 一次性 SM4 会话密钥
         'iv': os.urandom(16).hex(),       # SM4-CBC 初始向量
         'nonce': os.urandom(16).hex(),    # 一次性票号（防重放）
         'ts': int(time.time() * 1000) if now_ms is None else int(now_ms),
     }
-
-
-def _seal(plaintext: bytes, public_key_hex: str, now_ms=None) -> bytes:
-    """封包：生成 keyblob → SM2 封信封 → SM4 加密 → 打包成 JSON body。"""
-    blob = build_keyblob(now_ms)
     key, iv = bytes.fromhex(blob['key']), bytes.fromhex(blob['iv'])
+    # 用对方公钥把 keyblob 封成信封 —— 这就是"SM2 封装会话密钥"
     envelope = SM2.gmssl_sm2_encrypt_raw(public_key_hex, json.dumps(blob).encode('utf-8'))
     return pack(envelope, seal_body(plaintext, key, iv))
 
@@ -259,7 +213,7 @@ def seal_request(plaintext: bytes, now_ms=None, public_key_hex=None) -> bytes:
 
 
 def open_request(body, private_key_hex=None, now_ms=None) -> bytes:
-    """服务端拆一次请求，返回明文 bytes。用后端私钥拆信封。"""
+    """服务端拆一次请求，返回明文 bytes。装饰器 @tunnel_required 调的就是它。"""
     return _open(body, private_key_hex or FLASK_PRIVATE_KEY, now_ms)
 
 
@@ -269,17 +223,12 @@ def seal_response(payload: bytes, now_ms=None, public_key_hex=None) -> bytes:
 
 
 def open_response(body, private_key_hex=None, now_ms=None) -> bytes:
-    """客户端拆一次响应（自测与命令行脚本用；浏览器里由 JS 实现）。"""
+    """客户端拆一次响应（浏览器里由 sm-tunnel.js 实现，这里供 Python 自测用）。"""
     return _open(body, private_key_hex or VUE_PRIVATE_KEY, now_ms)
 
 
-def seal_json(obj, **kwargs) -> bytes:
-    """把 Python 对象转成 JSON 再封包，业务里最常用的入口。"""
-    return seal_request(json.dumps(obj, ensure_ascii=False).encode('utf-8'), **kwargs)
-
-
 # =============================================================================
-# 六、自测：python -m app.utils.tunnel
+# 五、自测：python -m app.utils.tunnel
 # =============================================================================
 def _self_test():
     print('=' * 66)
@@ -297,22 +246,22 @@ def _self_test():
 
     # 2) SM2 信封往返：明文 n 字节 -> 信封 97+n 字节
     msg = b'{"hello":"tunnel"}'
-    env = make_envelope(msg, FLASK_PUBLIC_KEY)
+    env = SM2.gmssl_sm2_encrypt_raw(FLASK_PUBLIC_KEY, msg)
     assert len(env) == 97 + len(msg), f'信封长度 {len(env)}'
-    assert open_envelop(env, FLASK_PRIVATE_KEY) == msg
+    assert SM2.gmssl_sm2_decrypt_raw(FLASK_PRIVATE_KEY, env) == msg
     print(f'[2] SM2 封装/拆封   : 明文 {len(msg)}B -> 信封 {len(env)}B（=97+明文）')
 
     # 3) 完整请求往返
     now = int(time.time() * 1000)
     data = {'username': 'zhangsan', 'password': '123456', 'role': 'user'}
-    wire = seal_json(data, now_ms=now)
+    payload = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    wire = seal_request(payload, now_ms=now)
     assert FIELD_ENV in json.loads(wire.decode()), '报文里应该有 env 字段'
-    got = open_request(wire, now_ms=now)
-    assert json.loads(got.decode('utf-8')) == data
+    assert json.loads(open_request(wire, now_ms=now).decode('utf-8')) == data
     print(f'[3] 请求封包/拆封   : 整个 body {len(wire)}B（一个 JSON 两个 base64 字段），明文一致')
 
     # 4) 重放：同一个包发第二次必须被拒
-    wire2 = seal_json(data, now_ms=now)
+    wire2 = seal_request(payload, now_ms=now)
     open_request(wire2, now_ms=now)                    # 第一次通过
     try:
         open_request(wire2, now_ms=now)                # 第二次应被拒
@@ -322,7 +271,7 @@ def _self_test():
         print(f'[4] nonce 重放      : 第二次 -> {e.code}（HTTP {e.http_status}）')
 
     # 5) 时间窗：±299 秒通过，±301 秒被拒
-    wire3 = seal_json(data, now_ms=now)
+    wire3 = seal_request(payload, now_ms=now)
     for drift, should_pass in ((299000, True), (-299000, True),
                                (301000, False), (-301000, False)):
         try:
