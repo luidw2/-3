@@ -10,16 +10,20 @@ ca_path.py —— 证书文件路径 / 环境配置模块
 """
 # app/config.py
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-# 加载 .env 文件（如果不在当前目录，可指定路径）
-load_dotenv()  # 默认查找当前目录或父目录的 .env
+# 以源码位置定位后端根目录，不依赖启动命令时的工作目录。
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BACKEND_DIR / '.env')
 
 # 获取基础路径
-# 证书根目录必须显式配置：未设置直接抛错，防止证书被写到错误的位置
-certs_dir = os.getenv('CERTS_DIR')
-if not certs_dir:
-    raise ValueError("环境变量 CERTS_DIR 未设置")
+# CERTS_DIR 可以是绝对路径，也可以是相对于后端根目录的路径。
+# 默认使用项目内的 app/certs，便于项目在不同机器上直接运行。
+configured_certs_dir = Path(os.getenv('CERTS_DIR', 'app/certs')).expanduser()
+if not configured_certs_dir.is_absolute():
+    configured_certs_dir = BACKEND_DIR / configured_certs_dir
+certs_dir = str(configured_certs_dir.resolve())
 
 # 确保目录存在
 # （首次运行自动创建，避免后续写证书文件时找不到目录）

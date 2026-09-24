@@ -18,16 +18,13 @@ import os
 import subprocess
 # 确保certificates目录存在
 
-# 证书目录约定统一放在 certs/ 下：以本文件所在目录向上两级拼接得到
-# （本文件位于 app/utils/，向上两级即后端项目根目录下的 certs/）
+# 证书目录以本文件位置为基准：app/utils/ 的上级是 app/。
+# 这样无论从哪个工作目录启动，都会使用项目内的 app/certs。
 current_dir = os.path.dirname(__file__)
-certs_dir = os.path.abspath(os.path.join(current_dir, '..', '..', 'certs'))
+certs_dir = os.path.abspath(os.path.join(current_dir, '..', 'certs'))
 
 # uploads：与证书目录同级的“用户上传文件”目录（不影响证书逻辑，仅作路径约定）
 uploads_dir = os.path.join(certs_dir, 'uploads')
-'''
-
-certs_dir = r'E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask\app\certs'
 os.makedirs(certs_dir, exist_ok=True)
 
 rootCA_dir = os.path.join(certs_dir, 'rootCA')
@@ -38,7 +35,6 @@ os.makedirs(server_dir, exist_ok=True)
 
 client_dir = os.path.join(certs_dir, 'client')
 os.makedirs(client_dir, exist_ok=True)
-'''
 
 
 # ==================== 密钥 / 证书 / 扩展配置文件路径 ====================
@@ -49,7 +45,7 @@ os.makedirs(client_dir, exist_ok=True)
 #   ca_rsa.key / ca_rsa.crt  ：RSA 根 CA 私钥与自签名证书（本文件中用于签发服务端证书）
 #   server.key / server.csr / server.crt ：服务端私钥、证书签名请求、最终证书
 #   server_ext.cnf           ：签发服务端证书时附加的扩展配置（密钥用途 / SAN 等）
-#   client.conf              ：客户端证书扩展配置文件（由客户端证书签发流程使用）
+#   client_ext.cnf           ：客户端证书扩展配置文件（由客户端证书签发流程使用）
 ca_sm2_key_path = os.path.join(rootCA_dir, "ca_sm2.key")
 ca_sm2_cert_path = os.path.join(rootCA_dir, "ca_sm2.crt")
 
@@ -60,7 +56,7 @@ server_csr_path = os.path.join(server_dir, "server.csr")
 server_cert_path = os.path.join(server_dir, "server.crt")
 server_ext_cnf_path = os.path.join(server_dir, "server_ext.cnf")
 
-client_ext_cnf_path = os.path.join(client_dir, "client.conf")
+client_ext_cnf_path = os.path.join(client_dir, "client_ext.cnf")
 # 生成 SM2 国密“根 CA”（CA 体系中最顶层的信任锚）：
 # 作用：一次性完成根 CA 初始化 —— 1) 生成 SM2 密钥对；2) 用该私钥自签名生成根证书。
 #       根证书将用于客户端数字证书的签发与信任链验证（登录校验链的起点）。
@@ -212,8 +208,8 @@ subjectAltName = DNS:localhost, IP:127.0.0.1
     '''
     6使用根CA签发服务端证书
     openssl x509 -req -in server.csr 
-    -CA C:\myCA\rootCA\ca.crt 
-    -CAkey C:\myCA\rootCA\ca.key 
+    -CA certs/server/ca_rsa.crt
+    -CAkey certs/server/ca_rsa.key
     -CAcreateserial -out server.crt -days 365 -sha256 
     -extfile server_ext.cnf -extensions v3_req
     '''

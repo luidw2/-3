@@ -22,10 +22,11 @@ from typing import Optional
 注意，用360浏览器edg?不行
 """
 
-# 演示用证书根目录：与项目实际证书存放位置一致（app/certs，内含 rootCA/server/client 子目录）
+# 演示用证书根目录：与项目实际证书存放位置一致（app/certs，内含 rootCA/server/client 子目录）。
+# 以当前源码文件为基准，不依赖机器的盘符或启动时的工作目录。
 # 以下 ensure 目录存在，供本模块直接读写证书文件
 # 确保certificates目录存在
-certs_dir = r'E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask\app\certs'
+certs_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'certs'))
 os.makedirs(certs_dir, exist_ok=True)
 
 rootCA_dir = os.path.join(certs_dir, 'rootCA')

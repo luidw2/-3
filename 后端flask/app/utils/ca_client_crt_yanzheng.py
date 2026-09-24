@@ -294,9 +294,10 @@ def extract_cert_thumbprint(pfx_data: bytes, password: str) -> str | None:
 '''
 使用示例
 if __name__ == "__main__":
-    with open(r"E:/Python/test_ca/certs/client/client_zhangsan.pfx", "rb") as f:
+    certs_dir = Path(__file__).resolve().parents[1] / "certs"
+    with open(certs_dir / "client" / "client_zhangsan.pfx", "rb") as f:
         cert_bytes = f.read()
-    with open(r"E:/Python/test_ca/certs/rootCA/ca_sm2.crt", "rb") as f:
+    with open(certs_dir / "rootCA" / "ca_sm2.crt", "rb") as f:
         root_ca = f.read()
     try:
         verify_certificate_format(cert_bytes,'123456')
@@ -312,7 +313,7 @@ if __name__ == "__main__":
     try:
         valid = is_certificate_valid(pfx_data=cert_bytes,password="123456")
         print(f"证书时间: {valid}")
-        # valid = is_certificate_valid(cert_path="E:\Python\\test_ca\certs\client\client_zhangsan.crt")
+        # valid = is_certificate_valid(cert_path=certs_dir / "client" / "client_zhangsan.crt")
         # print(f"证书有效: {valid}")
         pass
     except ValueError as e:

@@ -44,9 +44,10 @@ python
 import os
 import subprocess
 import requests  # 假设通过 HTTP 与服务器交互
+from pathlib import Path
 
 # 配置
-certs_dir = r'E:\Python\综设1重构-flask+vue\综设1重构-flask+vue\后端flask\app\certs'
+certs_dir = Path(__file__).resolve().parents[1] / 'certs'
 client_dir = os.path.join(certs_dir, 'client')
 os.makedirs(client_dir, exist_ok=True)
 
