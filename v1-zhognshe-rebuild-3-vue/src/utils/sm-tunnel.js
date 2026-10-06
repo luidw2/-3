@@ -36,7 +36,7 @@ const ENV = import.meta.env || {}
  */
 const FLASK_PUBLIC_KEY =
   ENV.VITE_SM2_FLASK_PUBLIC_KEY ||
-  '34917afcd83e883bd107a7322079a963b1f3575c2050ca52d53cba7f118200b609ded86e20d0432c7032def98f763b27a6fddae3765989ba3dae4350d24b74a8'
+  'bd7570293539cffcfe6cd42d30a454ccc4553009fdd0053dc8e686b87d42ffefb731c7cedf72feeb9de7890ef16139b51e04dfbf7717c6ae955546c120fb8ccf'
 
 /**
  * 前端自己的私钥（对应 .env 里的 SM2_VUE_PRIVATE_KEY）：用来拆后端回包的信封。
@@ -46,7 +46,7 @@ const FLASK_PUBLIC_KEY =
  */
 const VUE_PRIVATE_KEY =
   ENV.VITE_SM2_VUE_PRIVATE_KEY ||
-  '839aaadf3c4db79ffba124dec71308a56bd0df187fabdeb2c551cf9bd2af3de0'
+  'd9f459fb33111f1830f95e3069a262687aa65c112f19546f57b7f61844051ef0'
 
 const SM2_CIPHER_MODE = 0 // 0 = C1‖C2‖C3，与后端 gmssl 默认一致
 const FIELD_ENV = 'env' // 报文里放 SM2 信封的字段

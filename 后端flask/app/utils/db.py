@@ -86,7 +86,11 @@ DB_NAME = os.getenv('DB_NAME')
 DB_CHARSET = os.getenv('DB_CHARSET')
 
 # 创建连接字符串
-database_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+# 注意：口令必须先 URL 编码，否则密码里的 @ : / 等字符会被当作
+# URL 分隔符，例如密码 Root@123456 会把主机解析成 123456@127.0.0.1（实测报错）
+from urllib.parse import quote_plus
+_db_password = quote_plus(DB_PASSWORD) if DB_PASSWORD else ''
+database_url = f"mysql+pymysql://{DB_USER}:{_db_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # 创建数据库引擎[citation:3][citation:7]
 engine = create_engine(database_url,#连接池管理

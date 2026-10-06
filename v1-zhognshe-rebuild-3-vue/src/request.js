@@ -15,7 +15,7 @@ import {message} from "ant-design-vue";
 import { sealRequest, openResponse, isTunnelUrl } from './utils/sm-tunnel';
 
 // 后端接口基础地址：本地开发时直连本机 Flask 服务
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://127.0.0.1:5000';
 
 /**
  * 把后端返回的相对路径（如 '/static/uploads/xx.png'）拼成可访问的完整 URL。
