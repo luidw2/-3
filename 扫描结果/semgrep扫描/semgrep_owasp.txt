@@ -1,0 +1,36 @@
+                   
+                   
+┌─────────────────┐
+│ 4 Code Findings │
+└─────────────────┘
+                                             
+  [36m[22m[24m  后端flask\app\utils\SM2.py[0m
+   ❯❯❱ [1mpython.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected subprocess function 'run' with user controlled data. A malicious actor could leverage this
+          to perform command injection. You may consider using 'shlex.quote()'.                              
+          Details: https://sg.run/pLGg                                                                       
+                                                                                                             
+           47┆ [OPENSSL_PATH] + args,
+            ⋮┆----------------------------------------
+          279┆ result = subprocess.run([
+          280┆     OPENSSL_PATH, 'dgst', '-verify', public_key_path,
+          281┆     '-out', os.devnull, '-sm3', '-signature', signature_path, data_path
+          282┆ ], capture_output=True)
+                                             
+  [36m[22m[24m  后端flask\app\utils\SM4.py[0m
+   ❯❯❱ [1mpython.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected subprocess function 'run' with user controlled data. A malicious actor could leverage this
+          to perform command injection. You may consider using 'shlex.quote()'.                              
+          Details: https://sg.run/pLGg                                                                       
+                                                                                                             
+           43┆ [OPENSSL_PATH] + args,
+                                                       
+  [36m[22m[24m  后端flask\templates\pay_success.html[0m
+    ❯❱ [1mhtml.security.plaintext-http-link.plaintext-http-link[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          This link points to a plaintext HTTP URL. Prefer an encrypted HTTPS URL if possible.
+          Details: https://sg.run/RA5q                                                        
+                                                                                              
+           11┆ <a href="http://127.0.0.1:5173/user/products/profile">返回首页</a>

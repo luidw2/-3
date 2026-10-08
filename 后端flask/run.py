@@ -1,18 +1,21 @@
 r"""
-后端 Flask 启动入口 —— 本地开发模式（127.0.0.1，无内网穿透）
+后端 Flask 启动入口 —— 本地开发模式
 
 启动方式（在 后端flask 目录下执行）：
     .venv\Scripts\python.exe run.py
 
-启动后后端服务只监听本机 127.0.0.1:5000：
-    - 前端 dev server 在本机通过 http://127.0.0.1:5000 调用接口（见前端 src/request.js）
-    - 不对外网开放，也无需再启动 cpolar 等内网穿透工具
+监听地址由环境变量 FLASK_HOST 控制，默认只监听本机 127.0.0.1：
+    - 默认（推荐）：前端 dev server 通过 Vite 同源代理访问后端
+      （见前端 vite.config.js 的 server.proxy），浏览器看到的是同源请求，不触发跨域；
+    - 需要让虚拟机/局域网直连时（例如 Kali 做 DAST 扫描），临时指定具体网卡：
+        PowerShell:  $env:FLASK_HOST='0.0.0.0'; .venv\Scripts\python.exe run.py
 
-若将来需要局域网/公网访问：
-    1. 把下方 host 改回 '0.0.0.0'（监听所有网卡）并放行防火墙 5000 端口；
-    2. 启动 cpolar 等隧道工具，将 127.0.0.1:5000 映射为公网域名；
-    3. 把前端 src/request.js 中的 API_BASE_URL 换成对应的公网地址。
+实际部署形态建议：
+    后端只监听 127.0.0.1，由 Nginx 等统一入口对外提供 HTTPS 并反向代理到 5000，
+    即"对外只有一个入口、后端不直接面向网络"，应用层国密隧道是叠加在 HTTPS 之上。
 """
+import os
+
 from app.__init__ import create_app
 
 # create_app(config_name)：按名称加载 config/config.py 中对应的配置类
@@ -20,7 +23,8 @@ from app.__init__ import create_app
 app = create_app('development')
 
 if __name__ == '__main__':
-    # host='127.0.0.1'：只监听本机回环地址（本地开发默认，安全）
-    # host='0.0.0.0'  ：监听所有网卡（配合内网穿透/局域网部署时才需要）
-    # port=5000       ：后端端口，必须与前端 src/request.js 的 API_BASE_URL 保持一致
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    # 默认只监听回环地址：后端不直接对外，符合实际部署形态
+    # 需要局域网/虚拟机直连扫描时用环境变量临时打开，不要写死在代码里
+    host = os.getenv('FLASK_HOST', '127.0.0.1')
+    # debug=False：关闭 Werkzeug 调试控制台，避免调试器暴露
+    app.run(host=host, port=5000, debug=False)

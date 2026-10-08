@@ -1,0 +1,23 @@
+进入你的项目目录，对后端 Flask 代码执行递归扫描：
+
+powershell
+cd E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue
+bandit -r 后端flask
+-r 表示递归扫描子目录中的所有 Python 文件。Bandit 会解析每个文件为抽象语法树（AST），然后运行内置的安全检查插件。
+
+🔧 常用扫描参数
+参数	作用	示例
+-r	递归扫描目录	bandit -r 后端flask
+-lll	只显示 HIGH 严重性	bandit -r 后端flask -lll
+-ll	只显示 MEDIUM 及以上	bandit -r 后端flask -ll
+-iii	只显示 HIGH 置信度	bandit -r 后端flask -iii
+-x	排除指定目录	bandit -r . -x tests,venv
+-s	跳过指定检查规则	bandit -r 后端flask -s B101
+-n 3	每个问题显示 3 行上下文	bandit -r 后端flask -n 3
+
+
+
+
+
+bandit -r 后端flask -n 3
+
