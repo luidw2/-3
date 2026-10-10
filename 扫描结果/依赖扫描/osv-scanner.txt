@@ -1,0 +1,75 @@
+PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> .\后端flask\.venv\Scripts\Activate.ps1
+(.venv) PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> python -m pip freeze > '.\后端flask\requirements.txt'
+(.venv) PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> Get-Content '.\后端flask\requirements.txt'
+anitya_schema==2.3.0
+attrs==25.4.0
+Automat==25.4.16
+bcrypt==5.0.0
+blinker==1.9.0
+certifi==2026.2.25
+cffi==2.0.0
+charset-normalizer==3.4.4
+click==8.3.1
+colorama==0.4.6
+constantly==23.10.4
+crochet==2.1.1
+cryptography==46.0.5
+decorator==5.2.1
+defusedxml==0.7.1
+fedora_messaging==3.9.0
+fedora_messaging_the_new_hotness_schema==1.3.0
+Flask==3.1.3
+flask-cors==6.0.2
+gmssl==3.2.2
+googleapis-common-protos==1.72.0
+greenlet==3.3.2
+grpcio==1.78.0
+gssapi==1.11.1
+hyperlink==21.0.0
+idna==3.11
+Incremental==24.11.0
+itsdangerous==2.2.0
+Jinja2==3.1.6
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+koji==1.35.3
+MarkupSafe==3.0.3
+packaging==26.0
+pika==1.3.2
+protobuf==6.33.5
+pyasn1==0.6.2
+pyasn1_modules==0.4.2
+pycparser==3.0
+pycryptodomex==3.23.0
+PyJWT==2.11.0
+PyMySQL==1.2.0
+pyOpenSSL==25.3.0
+python-bugzilla==3.3.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.1
+redis==5.3.1
+referencing==0.37.0
+requests==2.32.5
+requests-gssapi==1.4.0
+rpds-py==0.30.0
+service-identity==24.2.0
+six==1.17.0
+SQLAlchemy==2.0.47
+the-new-hotness==1.3.0
+tomli==2.4.0
+Twisted==25.5.0
+typing_extensions==4.15.0
+urllib3==2.6.3
+v1==0.12.3
+Werkzeug==3.1.6
+wrapt==2.1.1
+zope.interface==8.2
+(.venv) PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> deactivate
+PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> osv-scanner -r .
+Scanning dir .
+Starting filesystem walk for root: E:\
+Scanned E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\v1-zhognshe-rebuild-3-vue\package-lock.json file and found 186 packages
+Scanned E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask\requirements.txt file and found 0 packages
+End status: 234 dirs visited, 660 inodes visited, 2 Extract calls, 178.7402ms elapsed, 178.7402ms wall time
+
+No issues found
