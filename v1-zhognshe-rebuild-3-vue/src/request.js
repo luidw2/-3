@@ -1,26 +1,26 @@
 /**
  * 统一 HTTP 请求封装（基于 axios）
  *
- * 本地开发方案：前端(127.0.0.1:5173) 与后端 Flask(127.0.0.1:5000) 分离运行，
- * 本文件决定所有接口请求发往哪个后端地址，以及静态资源图片的完整 URL 拼法。
- *
- * 后端地址配置规则（优先级从高到低）：
- *   1. 环境变量 VITE_API_BASE_URL —— 可在 前端根目录/.env.local 中设置以覆盖默认值；
- *   2. 代码默认值 http://127.0.0.1:5000（本地开发，不再依赖 cpolar 内网穿透）。
- * 若后端更换端口或部署到其它主机/公网，只需修改这一处（或通过 .env.local 覆盖）。
+ * 【同源方案】前端不再硬编码后端地址，默认使用相对路径（同源）：
+ *   - 开发期：vite.config.js 的 server.proxy 把 /user、/api、/product 等前缀
+ *     转发到 http://127.0.0.1:5000，浏览器看到的是同源请求，因此不触发 CORS；
+ *   - 交付/生产：前端 dist 与后端由同一入口（如 Nginx）对外服务，页面与接口同源。
+ * 只有在"前端不经过代理、要直连某个后端地址"时才用环境变量覆盖：
+ *   前端根目录/.env.local → VITE_API_BASE_URL=http://<host>:<port>
  */
 import axios from "axios";
 import {message} from "ant-design-vue";
 // 安全隧道：请求体加密 / 响应解密（实现见 src/utils/sm-tunnel.js）
 import { sealRequest, openResponse, isTunnelUrl } from './utils/sm-tunnel';
 
-// 后端接口基础地址：本地开发时直连本机 Flask 服务
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
+// 后端接口基础地址：默认留空 = 相对路径 = 同源（由 Vite 代理 / Nginx 转发到后端）
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 /**
- * 把后端返回的相对路径（如 '/static/uploads/xx.png'）拼成可访问的完整 URL。
+ * 把后端返回的路径（如 '/static/uploads/xx.png'）拼成可访问的 URL。
  * 组件里展示商品/订单图片时使用：<img :src="getApiUrl(record.image_url)" />
- * 传入的若已是 http(s) 完整地址则原样返回，避免二次拼接。
+ * - API_BASE_URL 为空（默认同源）时返回根相对路径，由 Vite 代理 / Nginx 转发到后端；
+ * - 传入的若已是 http(s) 完整地址则原样返回，避免二次拼接。
  */
 export const getApiUrl = (path = '') => {
   if (!path) {
@@ -32,9 +32,9 @@ export const getApiUrl = (path = '') => {
   return `${API_BASE_URL.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
 };
 
-// 创建 axios 实例：业务模块（src/api/*.js）只需写 '/user/xxx' 等相对路径，自动拼上 API_BASE_URL
+// 创建 axios 实例：业务模块（src/api/*.js）只需写 '/user/xxx' 等相对路径，默认由同源代理转发
 const myAxios = axios.create({
-  baseURL: API_BASE_URL,                    // 接口前缀（后端地址）
+  baseURL: API_BASE_URL,                    // 接口前缀（留空 = 同源相对路径）
   timeout: 100000,                          // 请求超时（毫秒）：大文件上传/证书登录耗时较长
   headers: {'X-Custom-Header': 'foobar'}    // 预留的自定义请求头
 });

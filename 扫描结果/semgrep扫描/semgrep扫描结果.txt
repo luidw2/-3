@@ -1,0 +1,189 @@
+
+PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> semgrep scan --config auto .
+
+┌──── ○○○ ────┐
+│ Semgrep CLI │
+└─────────────┘
+
+⠼ Loading rules from registry...                                                                                        Scanning 105 files (only git-tracked) with:
+
+✔ Semgrep OSS
+  ✔ Basic security coverage for first-party code vulnerabilities.
+
+✘ Semgrep Code (SAST)
+  ✘ Find and fix vulnerabilities in the code you write with advanced scanning and expert security rules.
+
+✘ Semgrep Supply Chain (SCA)
+  ✘ Find and fix the reachable vulnerabilities in your OSS dependencies.
+
+💎 Get started with all Semgrep products via `semgrep login`.
+✨ Learn more at https://sg.run/cloud.
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:03                                                                 
+
+
+┌─────────────────┐
+│ 4 Code Findings │
+└─────────────────┘
+
+    后端flask\app\middleware\secure_tunnel.py
+    ❯❱ python.flask.security.audit.xss.make-response-with-unknown-content.make-response-with-unknown-content
+          ❰❰ Blocking ❱❱
+          Be careful with `flask.make_response()`. If this response is rendered onto a webpage, this could
+          create a cross-site scripting (XSS) vulnerability. `flask.make_response()` will not autoescape HTML.
+          If you are rendering HTML, write your HTML in a template file and use `flask.render_template()`
+          which will take care of escaping. If you are returning data from an API, consider using
+          `flask.jsonify()`.
+          Details: https://sg.run/3x3p
+
+           65┆ resp = make_response(f(*args, **kwargs))
+
+    后端flask\app\utils\ca_client.py
+    ❯❱ python.lang.security.audit.hardcoded-password-default-argument.hardcoded-password-default-argument
+          ❰❰ Blocking ❱❱
+          Hardcoded password is used as a default argument to 'generate_client_cert'. This could be dangerous
+          if a real password is not supplied.
+          Details: https://sg.run/Lw9r
+
+           65┆ def generate_client_cert(
+           66┆     username: str,
+           67┆     ca_cert_path: str,
+           68┆     ca_key_path: str,
+           69┆     client_ext_cnf_path: str,
+           70┆     days: int = 365,
+           71┆     password: str = '123456',
+           72┆     role: str = 'user',
+           73┆ ) -> Optional[bytes]:
+           74┆     # 鍏ㄩ儴涓 闂翠骇鐗╋紙绉侀挜 / CSR / 璇佷功 / PFX锛夐兘鍦ㄤ复鏃剁洰褰曚腑鐢熸垚锛 
+             [hid 75 additional lines, adjust with --max-lines-per-finding]
+
+    后端flask\app\utils\ca_client_crt_yanzheng.py
+    ❯❱ python.lang.security.audit.hardcoded-password-default-argument.hardcoded-password-default-argument
+          ❰❰ Blocking ❱❱
+          Hardcoded password is used as a default argument to 'extract_cert_from_pfx'. This could be dangerous
+          if a real password is not supplied.
+          Details: https://sg.run/Lw9r
+
+          216┆ def extract_cert_from_pfx(pfx_data: bytes, password: str = "123456") -> bytes:
+          217┆     """浠  PKCS#12 (PFX) 鏁版嵁涓 鎻愬彇绗 涓 涓 璇佷功锛圥EM 鏍煎紡锛 """
+          218┆     with tempfile.NamedTemporaryFile(mode='wb', suffix='.pfx', delete=False) as pfx_file:
+          219┆         pfx_file.write(pfx_data)
+          220┆         pfx_path = pfx_file.name
+          221┆
+          222┆     with tempfile.NamedTemporaryFile(mode='wb', suffix='.pem', delete=False) as
+               cert_file:
+          223┆         cert_path = cert_file.name
+          224┆
+          225┆     try:
+             [hid 22 additional lines, adjust with --max-lines-per-finding]
+
+    后端flask\templates\pay_success.html
+    ❯❱ html.security.plaintext-http-link.plaintext-http-link
+          ❰❰ Blocking ❱❱
+          This link points to a plaintext HTTP URL. Prefer an encrypted HTTPS URL if possible.
+          Details: https://sg.run/RA5q
+
+           11┆ <a href="http://127.0.0.1:5173/user/products/profile">杩斿洖棣栭〉</a>
+
+
+
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 4 (4 blocking)
+ • Rules run: 460
+ • Targets scanned: 105
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 460 rules on 105 files: 4 findings.
+💎 Missed out on 1856 pro rules since you aren't logged in!
+⚡ Supercharge Semgrep OSS when you create a free account at https://sg.run/rules.
+
+
+PS E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue> semgrep scan --config p/owasp-top-ten .
+
+┌──── ○○○ ────┐
+│ Semgrep CLI │
+└─────────────┘
+
+⠼ Loading rules from registry...                                                                                        Scanning 105 files (only git-tracked) with 560 Code rules:
+
+  CODE RULES
+
+  Language      Rules   Files          Origin      Rules
+ ─────────────────────────────        ───────────────────
+  <multilang>       6     105          Community     560
+  python          147      51
+  js               65       9
+  html              1       3
+  json              3       2
+
+
+  SUPPLY CHAIN RULES
+
+  💎 Sign in with `semgrep login` and run
+     `semgrep ci` to find dependency vulnerabilities and
+     advanced cross-file findings.
+
+
+  PROGRESS
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:02                                                                 
+
+
+┌─────────────────┐
+│ 4 Code Findings │
+└─────────────────┘
+
+    后端flask\app\utils\SM2.py
+   ❯❯❱ python.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args
+          ❰❰ Blocking ❱❱
+          Detected subprocess function 'run' with user controlled data. A malicious actor could leverage this
+          to perform command injection. You may consider using 'shlex.quote()'.
+          Details: https://sg.run/pLGg
+
+           47┆ [OPENSSL_PATH] + args,
+            ⋮┆----------------------------------------
+          279┆ result = subprocess.run([
+          280┆     OPENSSL_PATH, 'dgst', '-verify', public_key_path,
+          281┆     '-out', os.devnull, '-sm3', '-signature', signature_path, data_path
+          282┆ ], capture_output=True)
+
+    后端flask\app\utils\SM4.py
+   ❯❯❱ python.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args
+          ❰❰ Blocking ❱❱
+          Detected subprocess function 'run' with user controlled data. A malicious actor could leverage this
+          to perform command injection. You may consider using 'shlex.quote()'.
+          Details: https://sg.run/pLGg
+
+           43┆ [OPENSSL_PATH] + args,
+
+    后端flask\templates\pay_success.html
+    ❯❱ html.security.plaintext-http-link.plaintext-http-link
+          ❰❰ Blocking ❱❱
+          This link points to a plaintext HTTP URL. Prefer an encrypted HTTPS URL if possible.
+          Details: https://sg.run/RA5q
+
+           11┆ <a href="http://127.0.0.1:5173/user/products/profile">杩斿洖棣栭〉</a>
+
+
+
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 4 (4 blocking)
+ • Rules run: 222
+ • Targets scanned: 105
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 222 rules on 105 files: 4 findings.
+💎 Missed out on 1800 pro rules since you aren't logged in!
+⚡ Supercharge Semgrep OSS when you create a free account at https://sg.run/rules.
+
+
+
+

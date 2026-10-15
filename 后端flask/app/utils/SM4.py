@@ -155,7 +155,7 @@ def sm4_decrypt(key, my_iv,ciphertext):
             '-out', plaintext_path, '-pass', f'file:{key_path}', 
             '-iv', my_iv.hex()  # 16字节IV
         ])
-        
+
         # 读取解密结果：解密还原出的原始明文(字节串)，按 'rb' 读回返回
         with open(plaintext_path, 'rb') as f:
             plaintext = f.read()
