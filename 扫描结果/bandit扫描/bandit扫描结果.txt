@@ -1,23 +1,84 @@
-进入你的项目目录，对后端 Flask 代码执行递归扫描：
+================================================================
+Bandit 扫描命令记录（已排除依赖项）
+================================================================
 
-powershell
-cd E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue
-bandit -r 后端flask
--r 表示递归扫描子目录中的所有 Python 文件。Bandit 会解析每个文件为抽象语法树（AST），然后运行内置的安全检查插件。
+【执行环境】
+  bandit 1.9.4（全局 Python）
+  工作目录：E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask
 
-🔧 常用扫描参数
-参数	作用	示例
--r	递归扫描目录	bandit -r 后端flask
--lll	只显示 HIGH 严重性	bandit -r 后端flask -lll
--ll	只显示 MEDIUM 及以上	bandit -r 后端flask -ll
--iii	只显示 HIGH 置信度	bandit -r 后端flask -iii
--x	排除指定目录	bandit -r . -x tests,venv
--s	跳过指定检查规则	bandit -r 后端flask -s B101
--n 3	每个问题显示 3 行上下文	bandit -r 后端flask -n 3
+【关键：排除 .venv 等依赖 / 非源码目录】
+  原命令 bandit -r 后端flask 未排除 .venv，导致 3539 条命中中 3485 条（98.5%）
+  来自站点包，属无效噪音。本次重扫加入 --exclude。
 
+----------------------------------------------------------------
+1) JSON（覆盖 bandit.json）
+----------------------------------------------------------------
+cd "E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask"
+bandit -r . --exclude ".venv,venv,__pycache__,logs,.idea,app\static\uploads,static\uploads,templates" -f json -o "..\扫描结果\bandit扫描\bandit.json"
 
+----------------------------------------------------------------
+2) TXT（覆盖 bandit.txt）
+----------------------------------------------------------------
+cd "E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask"
+bandit -r . --exclude ".venv,venv,__pycache__,logs,.idea,app\static\uploads,static\uploads,templates" -f txt -o "..\扫描结果\bandit扫描\bandit.txt"
 
+----------------------------------------------------------------
+3) HTML（覆盖 bandit.html）
+----------------------------------------------------------------
+cd "E:\Python\综设1重构-flask+vue-sm2尝试\综设1重构-flask+vue\后端flask"
+bandit -r . --exclude ".venv,venv,__pycache__,logs,.idea,app\static\uploads,static\uploads,templates" -f html -o "..\扫描结果\bandit扫描\bandit.html"
 
+================================================================
+【结果对比】
+================================================================
+                    重扫前        重扫后
+命中总数              3539           54
+  其中来自 .venv      3485            0
+  项目自身代码           54           54
+扫描代码行数        942,422        6,352
+MEDIUM / HIGH          371            0
+LOW                   3168           54
 
-bandit -r 后端flask -n 3
+【54 条的规则分布（全部 LOW）】
+  B603  17  子进程调用（subprocess）
+  B607  12  以相对路径启动进程（openssl）
+  B101  10  assert 用于校验
+  B404   5  引入 subprocess 模块
+  B105   3  硬编码密码字符串
+  B112   3  try-except-continue
+  B107   2  函数默认参数为密码
+  B311   1  非加密随机数
+  B110   1  try-except-pass
 
+【54 条的文件分布】
+  app\utils\ca.py                      15
+  app\utils\tunnel.py                  12
+  app\utils\ca_client.py               10
+  app\utils\SM2.py                      6
+  app\utils\ca_client_crt_yanzheng.py   6
+  app\utils\SM4.py                      2
+  app\api\v1\profile.py                 1
+  app\utils\email_iii.py                1
+  app\utils\logging_config.py           1
+
+================================================================
+【Bandit 常用参数备忘】
+================================================================
+  -r          递归扫描目录
+  -x / --exclude  排除指定目录（逗号分隔，相对 -r 的路径）
+  -f          输出格式：json / txt / html / csv / sarif
+  -o          输出到文件
+  -lll        只显示 HIGH 严重性
+  -ll         只显示 MEDIUM 及以上
+  -iii        只显示 HIGH 置信度
+  -s          跳过指定规则，如 -s B101
+  -n 3        每个问题显示 3 行上下文代码
+
+================================================================
+【说明】
+================================================================
+1. --exclude 使用逗号分隔的相对路径（相对 -r 指定的目录）。
+2. .venv 是虚拟环境（第三方库）；logs 是运行日志；__pycache__ 是字节码缓存；
+   .idea 是 IDE 配置；app\static\uploads 是用户上传文件。
+   templates 目录经实测排除后命中数不变（Bandit 只扫 .py，0 条来自 templates）。
+3. 原始未排除依赖的报告已备份到：扫描结果\bandit扫描\_原始备份\
