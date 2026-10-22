@@ -14,9 +14,10 @@ csr交给服务端，服务器根据csr和client_ext.cnf文件生成client.crt�
 #   ca_client_crt_yanzheng.py）。
 # 说明：真实场景中客户端私钥应只在用户本机生成，此处为教学演示统一由后端代为生成。
 import os
-import subprocess
+import re
 import tempfile
 from typing import Optional
+from .openssl_runner import run_openssl, validate_secret, OpenSSLError
 
 """
 注意，用360浏览器edg?不行
@@ -74,6 +75,16 @@ def generate_client_cert(
     # 全部中间产物（私钥 / CSR / 证书 / PFX）都在临时目录中生成，
     # 函数退出后临时目录自动清理，客户端证书只在内存与最终返回的 PFX 字节流中存在
     with tempfile.TemporaryDirectory() as tmpdir:
+        # —— 防御性校验（第一道）：username 会拼进 -subj 证书主体与临时文件名，
+        #    这里做白名单检查，杜绝 DN 注入（如含 / 会改变 DN 结构）
+        #    与路径穿越（如含 ..\ 会跳出临时目录）。
+        #    调用方（register.py）虽然也校验，但本函数是公共入口，需自行兜底。
+        if not isinstance(username, str) or not re.match(r'^[A-Za-z0-9_]+$', username):
+            raise ValueError(f'用户名含非法字符: {username!r}')
+
+        # —— 口令校验（第一道）：非空、≤128 字符、不以 - 开头、仅安全字符
+        validate_secret(password, 'PFX 口令')
+
         # 按角色重命名用户名（user_张三 / seller_李四），使证书 CN 能区分用户与商家；
         # 后续登录验证时据此从 CN 还原出纯用户名（见 ca_client_crt_yanzheng.py）
         if role == 'user':
@@ -92,19 +103,19 @@ def generate_client_cert(
         # 命令：openssl ecparam -name SM2 -genkey -out 客户端私钥
         # —— 生成国密 SM2 椭圆曲线密钥对（客户端私钥，只在本函数内使用，最终打进 PFX）
         try:
-                subprocess.run([
-                        'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path
-                    ], check=True)
+                run_openssl(
+                    ['ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path]
+                )
 
                 #2. 生成客户端CSR
                 # 命令：openssl req -new —— 用私钥生成证书签名请求(CSR)：
                 # 内含公钥与主体信息(CN=user_用户名、emailAddress=…)，但不含私钥，
                 # 因此可安全地把 CSR 交给 CA(服务端)去签发证书
-                subprocess.run([
-                        'openssl', 'req', '-new', '-key', client_key_path,
+                run_openssl([
+                        'req', '-new', '-key', client_key_path,
                         '-out', client_csr_path,
                         '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'
-                    ], check=True)
+                    ])
                 #.4 使用根CA签发客户端证书
                 # 命令：openssl x509 -req -CA 根CA证书 -CAkey 根CA私钥 ...
                 # —— 即“CA 用自己私钥为 CSR 签名”，把请求转换成真正的 X.509 客户端证书：
@@ -112,36 +123,38 @@ def generate_client_cert(
                 #   -sm3 国密摘要算法；-extfile/-extensions 附加客户端证书扩展
                 #   （来自 client_ext.cnf：密钥用途 / 证书类型 / 约束等，
                 #     约束该证书只能作为客户端证书使用，不能用于签发下级证书）
-                subprocess.run([
-                    'openssl', 'x509', '-req', '-in', client_csr_path,
+                run_openssl([
+                    'x509', '-req', '-in', client_csr_path,
                     '-CA', ca_cert_path, '-CAkey', ca_key_path,
                     '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',
                     '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'
-                ], check=True)
+                ])
 
     #打包成pfx格式
     # 命令：openssl pkcs12 -export —— 把“客户端私钥(-inkey) + 客户端证书(-in) +
     # 根CA证书(-certfile)”打包成 PKCS#12(PFX) 容器，-password pass:xxx 为 PFX 设置口令；
     # 生成的 PFX 可导入浏览器“个人证书”，登录时浏览器即携带该证书完成客户端认证
-                subprocess.run([
-                    'openssl', 'pkcs12', '-export',
-                    '-out', client_pfx_path,
-                    '-inkey', client_key_path,
-                    '-in', client_cert_path,
-                    '-certfile', ca_cert_path,
-                    '-password', f'pass:{password}'
-                ], check=True)
+                run_openssl(
+                    [
+                        'pkcs12', '-export',
+                        '-out', client_pfx_path,
+                        '-inkey', client_key_path,
+                        '-in', client_cert_path,
+                        '-certfile', ca_cert_path,
+                        '-password', 'stdin',  # ← 注意：导出用的是 -password，不是 -passin
+                    ],
+                    stdin_data=password + '\n',
+                )
 
                 # 读取 PFX 文件的字节流并返回给上层（由接口转成文件下载给用户）
                 with open(client_pfx_path, 'rb') as f:
                     pfx_data = f.read()
                 return pfx_data
 
-        # openssl 命令执行失败（返回码非 0）：打印命令信息与错误输出，返回 None
-        except subprocess.CalledProcessError as e:
+        # openssl 调用失败（启动失败 / 超时 / 返回码非 0）：
+        # OpenSSLError 的消息里已包含 exit code 与 stderr，直接打印即可
+        except OpenSSLError as e:
                 print(f"OpenSSL命令失败: {e}")
-                if e.stderr:
-                    print(f"错误输出: {e.stderr.decode()}")
                 return None
         # 其它异常（如临时文件读写失败）统一捕获，避免把内部异常抛给上层
         except Exception as e:

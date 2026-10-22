@@ -18,8 +18,9 @@
 # ============================================================================
 from flask import Blueprint, request, jsonify, g
 from app.utils import db, my_bcrypt
-from app.middleware import jwt_auth_required, rate_limit
+from app.middleware import jwt_auth_required, rate_limit,tunnel_required
 from datetime import datetime
+
 
 # 创建蓝图
 user = Blueprint('profile', __name__)

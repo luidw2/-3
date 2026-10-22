@@ -1,4 +1,3 @@
-import subprocess
 import tempfile
 from dotenv import load_dotenv
 import os
@@ -31,29 +30,30 @@ sm2使用byte的格式
 # tempfile 临时目录中，函数返回前自动清理，不向项目目录落盘任何文件。
 # 数据约定：明文/密文/签名一律使用 bytes；密钥为 PEM 格式文本字符串。
 # =============================================================================
-# OpenSSL 路径配置
+# OpenSSL 路径与子进程调用统一由 openssl_runner 提供：
+#   - get_openssl_path()：导入时即校验 OPENSSL_PATH（绝对路径 / 存在 / 可执行 / 文件名匹配），
+#     校验不过直接抛错，避免把未校验的环境变量当命令执行
+#   - run_openssl()：统一执行入口（列表传参 / 不用 shell / 最小环境变量 / 30s 超时）
 load_dotenv()
 
-OPENSSL_PATH = os.getenv('OPENSSL_PATH')
+try:
+    # 正常情况：本模块作为 app.utils 包的成员被导入
+    from .openssl_runner import get_openssl_path, run_openssl
+except ImportError:  # 直接以脚本方式运行本文件时（python app/utils/SM2.py）的回退
+    from openssl_runner import get_openssl_path, run_openssl
+
+OPENSSL_PATH = get_openssl_path()
 
 
 def run_openssl_command(args):
     """
-    运行OpenSSL命令并返回结果
+    运行 OpenSSL 命令并返回 stdout 文本。
+
+    保留原有函数签名与返回值，真正的执行逻辑已收敛到 openssl_runner.run_openssl：
+    路径校验、最小环境变量、超时、错误类型（OpenSSLError）均由那里统一处理。
+    OpenSSL 返回码非 0 时抛 OpenSSLError（RuntimeError 子类），消息中含 stderr。
     """
-    # —— subprocess.run：以独立进程执行 [OpenSSL可执行文件] + args，
-    #     capture_output=True 捕获命令的 stdout/stderr，text=True 表示按文本读取
-    result = subprocess.run(
-        [OPENSSL_PATH] + args,
-        capture_output=True,
-        text=True
-    )
-    # OpenSSL 约定：返回码 0 表示命令成功；非 0 时把“完整命令 + stderr 错误信息”
-    # 拼装成异常抛出，方便上层调用处定位是哪一步、因什么原因失败
-    if result.returncode != 0:
-        error_msg = f"OpenSSL命令执行失败: {' '.join(args)}\n错误: {result.stderr.strip()}"
-        raise Exception(error_msg)
-    # 执行成功：返回 stdout 文本（命令没有文本输出时为空字符串）
+    result = run_openssl(args)
     return result.stdout
 
 # 内部大致步骤：临时目录 → 依次尝试 3 种命令写法生成私钥 → 由私钥导出公钥 PEM
@@ -276,10 +276,12 @@ def sm2_verify(public_key, data, signature):
         # dgst -verify：用公钥验证 SM2 签名；-sm3 指明签名时所用的摘要是 SM3；
         # -out os.devnull：验证过程不需要查看 OpenSSL 的文本输出，直接丢弃，
         # 只需根据命令的退出码(returncode)判断验证结果
-        result = subprocess.run([
-            OPENSSL_PATH, 'dgst', '-verify', public_key_path, 
-            '-out', os.devnull, '-sm3', '-signature', signature_path, data_path
-        ], capture_output=True)
+        # check=False：验签失败返回非 0 是正常业务结果，不应抛异常
+        result = run_openssl(
+            ['dgst', '-verify', public_key_path,
+             '-out', os.devnull, '-sm3', '-signature', signature_path, data_path],
+            check=False,
+        )
         
     # OpenSSL 约定：验签通过时退出码为 0、失败时非 0，这里直接映射成布尔值返回
     return result.returncode == 0
