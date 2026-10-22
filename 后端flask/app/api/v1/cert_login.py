@@ -28,6 +28,7 @@
 # app/api/v1/cert_login.py
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+import re
 from app.middleware import rate_limit
 from app.utils import db, auth,ca_client_crt_yanzheng
 from config.ca_path import ca_sm2_cert_path
@@ -83,6 +84,32 @@ def cert_login():
             code=400,
             error='参数缺失',
             message='请上传证书文件',
+            status=400
+        )
+
+    # 证书口令格式校验（安全用途，与 openssl_runner.validate_secret 规则一致）：
+    #   口令会交给 openssl pkcs12 -passin stdin 使用，入口先拦一道畸形输入
+    #   （缺失 / 超长 / 以 - 开头 / 含控制字符或空格引号等），
+    #   保证返回 400 而不是等到深层调用抛异常变成 500。
+    if not password or not isinstance(password, str):
+        return build_response(
+            code=400,
+            error='参数缺失',
+            message='请提供证书口令',
+            status=400
+        )
+    if len(password) > 128:
+        return build_response(
+            code=400,
+            error='参数非法',
+            message='证书口令长度不能超过 128 个字符',
+            status=400
+        )
+    if password.startswith('-') or not re.match(r'^[A-Za-z0-9_\-.,:@#!*+=]+$', password):
+        return build_response(
+            code=400,
+            error='参数非法',
+            message='证书口令含非法字符，仅允许字母、数字和 _-.,:@#!*+=',
             status=400
         )
 

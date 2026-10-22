@@ -1,4 +1,4 @@
-Run started:2026-10-20 03:17:56.445129+00:00
+Run started:2026-10-22 01:24:36.886920+00:00
 
 Test results:
 >> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'None'
@@ -17,30 +17,6 @@ Test results:
 133	            'code': 0,
 134	            'message': '获取安全信息成功',
 135	            'data': security_info,
-
---------------------------------------------------
->> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
-   Location: .\app\utils\SM2.py:1:0
-1	import subprocess
-2	import tempfile
-3	from dotenv import load_dotenv
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\SM2.py:46:13
-45	    #     capture_output=True 捕获命令的 stdout/stderr，text=True 表示按文本读取
-46	    result = subprocess.run(
-47	        [OPENSSL_PATH] + args,
-48	        capture_output=True,
-49	        text=True
-50	    )
-51	    # OpenSSL 约定：返回码 0 表示命令成功；非 0 时把“完整命令 + stderr 错误信息”
 
 --------------------------------------------------
 >> Issue: [B112:try_except_continue] Try, Except, Continue detected.
@@ -76,556 +52,160 @@ Test results:
 198	        else:
 
 --------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\SM2.py:279:17
-278	        # 只需根据命令的退出码(returncode)判断验证结果
-279	        result = subprocess.run([
-280	            OPENSSL_PATH, 'dgst', '-verify', public_key_path, 
-281	            '-out', os.devnull, '-sm3', '-signature', signature_path, data_path
-282	        ], capture_output=True)
-283	        
-
---------------------------------------------------
->> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
-   Location: .\app\utils\SM4.py:1:0
-1	import subprocess
-2	import tempfile
-3	from dotenv import load_dotenv
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\SM4.py:42:13
-41	    #     capture_output=True 捕获命令的 stdout/stderr，text=True 表示按文本读取
-42	    result = subprocess.run(
-43	        [OPENSSL_PATH] + args,
-44	        capture_output=True,
-45	        text=True
-46	    )
-47	    # OpenSSL 约定：返回码 0 表示命令成功；非 0 时把“完整命令 + stderr 错误信息”
-
---------------------------------------------------
->> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
-   Location: .\app\utils\ca.py:18:0
-17	import os
-18	import subprocess
-19	# 确保certificates目录存在
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:74:8
-73	        # —— 生成国密 SM2 椭圆曲线密钥对并写入私钥文件（CA 私钥，需妥善保管）
-74	        subprocess.run([
-75	            'openssl','ecparam','-name','SM2','-genkey','-out', ca_sm2_key_path
-76	        ], check=True)
-77	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:74:8
-73	        # —— 生成国密 SM2 椭圆曲线密钥对并写入私钥文件（CA 私钥，需妥善保管）
-74	        subprocess.run([
-75	            'openssl','ecparam','-name','SM2','-genkey','-out', ca_sm2_key_path
-76	        ], check=True)
-77	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:92:8
-91	        #    -sm3：使用国密摘要算法 SM3（与 SM2 配套组成国密体系）
-92	        subprocess.run([
-93	            'openssl','req', '-x509','-new','-nodes','-key',ca_sm2_key_path,
-94	            '-days','3650','-out',ca_sm2_cert_path, '-subj',
-95	            '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA','-sm3'
-96	        ], check=True)
-97	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:92:8
-91	        #    -sm3：使用国密摘要算法 SM3（与 SM2 配套组成国密体系）
-92	        subprocess.run([
-93	            'openssl','req', '-x509','-new','-nodes','-key',ca_sm2_key_path,
-94	            '-days','3650','-out',ca_sm2_cert_path, '-subj',
-95	            '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA','-sm3'
-96	        ], check=True)
-97	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:115:8
-114	        # —— 生成 4096 位 RSA 私钥（作为 RSA CA 的私钥）
-115	        subprocess.run([
-116	            'openssl','genrsa','-out', ca_rsa_key_path,'4096'
-117	        ], check=True)
-118	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:115:8
-114	        # —— 生成 4096 位 RSA 私钥（作为 RSA CA 的私钥）
-115	        subprocess.run([
-116	            'openssl','genrsa','-out', ca_rsa_key_path,'4096'
-117	        ], check=True)
-118	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:132:8
-131	        #    主体信息与 SM2 根证书保持一致：MySecureECommerceCA）
-132	        subprocess.run([
-133	            'openssl','req', '-x509','-new','-nodes','-key',ca_rsa_key_path,
-134	            '-sha256','-days','3650','-out',ca_rsa_cert_path,'-subj',
-135	            '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA'
-136	        ], check=True)
-137	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:132:8
-131	        #    主体信息与 SM2 根证书保持一致：MySecureECommerceCA）
-132	        subprocess.run([
-133	            'openssl','req', '-x509','-new','-nodes','-key',ca_rsa_key_path,
-134	            '-sha256','-days','3650','-out',ca_rsa_cert_path,'-subj',
-135	            '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA'
-136	        ], check=True)
-137	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:147:8
-146	        # —— 生成服务端 RSA 私钥（2048 位，供 HTTPS 服务端证书使用）
-147	        subprocess.run([
-148	            'openssl', 'genrsa', '-out',server_key_path, '2048'
-149	        ], check=True)
-150	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:147:8
-146	        # —— 生成服务端 RSA 私钥（2048 位，供 HTTPS 服务端证书使用）
-147	        subprocess.run([
-148	            'openssl', 'genrsa', '-out',server_key_path, '2048'
-149	        ], check=True)
-150	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:161:8
-160	        #    主体 CN=localhost（本机部署场景，服务端证书 CN 使用 localhost）
-161	        subprocess.run([
-162	            'openssl', 'req', '-new','-key', server_key_path,
-163	            '-out', server_csr_path, '-subj',
-164	            '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=localhost'
-165	        ], check=True)
-166	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:161:8
-160	        #    主体 CN=localhost（本机部署场景，服务端证书 CN 使用 localhost）
-161	        subprocess.run([
-162	            'openssl', 'req', '-new','-key', server_key_path,
-163	            '-out', server_csr_path, '-subj',
-164	            '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=localhost'
-165	        ], check=True)
-166	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca.py:224:8
-223	        # 签发完成后 server.key + server.crt 即为服务端可用的 HTTPS 证书对。
-224	        subprocess.run([
-225	        'openssl', 'x509', '-req' ,'-in',server_csr_path,
-226	        '-CA', ca_rsa_cert_path,
-227	        '-CAkey', ca_rsa_key_path,
-228	        '-CAcreateserial','-out',server_cert_path,'-days', '365' ,'-sha256' ,
-229	        '-extfile', server_ext_cnf_path, '-extensions','v3_req'
-230	        ], check=True)
-231	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca.py:224:8
-223	        # 签发完成后 server.key + server.crt 即为服务端可用的 HTTPS 证书对。
-224	        subprocess.run([
-225	        'openssl', 'x509', '-req' ,'-in',server_csr_path,
-226	        '-CA', ca_rsa_cert_path,
-227	        '-CAkey', ca_rsa_key_path,
-228	        '-CAcreateserial','-out',server_cert_path,'-days', '365' ,'-sha256' ,
-229	        '-extfile', server_ext_cnf_path, '-extensions','v3_req'
-230	        ], check=True)
-231	    except subprocess.CalledProcessError as e:
-
---------------------------------------------------
->> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
-   Location: .\app\utils\ca_client.py:17:0
-16	import os
-17	import subprocess
-18	import tempfile
+>> Issue: [B107:hardcoded_password_default] Possible hardcoded password: '123456'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b107_hardcoded_password_default.html
+   Location: .\app\utils\ca_client.py:66:0
+65	# 返回：成功返回 PFX 字节流（供前端下载后导入浏览器）；任一步 openssl 失败返回 None
+66	def generate_client_cert(
+67	    username: str,
+68	    ca_cert_path: str,
+69	    ca_key_path: str,
+70	    client_ext_cnf_path: str,
+71	    days: int = 365,
+72	    password: str = '123456',
+73	    role: str = 'user',
+74	) -> Optional[bytes]:
+75	    # 全部中间产物（私钥 / CSR / 证书 / PFX）都在临时目录中生成，
+76	    # 函数退出后临时目录自动清理，客户端证书只在内存与最终返回的 PFX 字节流中存在
+77	    with tempfile.TemporaryDirectory() as tmpdir:
+78	        # —— 防御性校验（第一道）：username 会拼进 -subj 证书主体与临时文件名，
+79	        #    这里做白名单检查，杜绝 DN 注入（如含 / 会改变 DN 结构）
+80	        #    与路径穿越（如含 ..\ 会跳出临时目录）。
+81	        #    调用方（register.py）虽然也校验，但本函数是公共入口，需自行兜底。
+82	        if not isinstance(username, str) or not re.match(r'^[A-Za-z0-9_]+$', username):
+83	            raise ValueError(f'用户名含非法字符: {username!r}')
+84	
+85	        # —— 口令校验（第一道）：非空、≤128 字符、不以 - 开头、仅安全字符
+86	        validate_secret(password, 'PFX 口令')
+87	
+88	        # 按角色重命名用户名（user_张三 / seller_李四），使证书 CN 能区分用户与商家；
+89	        # 后续登录验证时据此从 CN 还原出纯用户名（见 ca_client_crt_yanzheng.py）
+90	        if role == 'user':
+91	            username = f"{role}_{username}"
+92	        elif role == 'seller':
+93	            username = f"{role}_{username}"
+94	        else:
+95	            raise ValueError(f"没有{role}这个角色")
+96	
+97	        # 定义临时文件路径
+98	        client_key_path = os.path.join(tmpdir, f"{username}.key")
+99	        client_csr_path = os.path.join(tmpdir, f"{username}.csr")
+100	        client_cert_path = os.path.join(tmpdir, f"{username}.crt")
+101	        client_pfx_path = os.path.join(tmpdir, f"{username}.pfx")
+102	        #1.生成客户端SM2私钥
+103	        # 命令：openssl ecparam -name SM2 -genkey -out 客户端私钥
+104	        # —— 生成国密 SM2 椭圆曲线密钥对（客户端私钥，只在本函数内使用，最终打进 PFX）
+105	        try:
+106	                run_openssl(
+107	                    ['ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path]
+108	                )
+109	
+110	                #2. 生成客户端CSR
+111	                # 命令：openssl req -new —— 用私钥生成证书签名请求(CSR)：
+112	                # 内含公钥与主体信息(CN=user_用户名、emailAddress=…)，但不含私钥，
+113	                # 因此可安全地把 CSR 交给 CA(服务端)去签发证书
+114	                run_openssl([
+115	                        'req', '-new', '-key', client_key_path,
+116	                        '-out', client_csr_path,
+117	                        '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'
+118	                    ])
+119	                #.4 使用根CA签发客户端证书
+120	                # 命令：openssl x509 -req -CA 根CA证书 -CAkey 根CA私钥 ...
+121	                # —— 即“CA 用自己私钥为 CSR 签名”，把请求转换成真正的 X.509 客户端证书：
+122	                #   -CAcreateserial 维护证书序列号文件；-days 指定有效期；
+123	                #   -sm3 国密摘要算法；-extfile/-extensions 附加客户端证书扩展
+124	                #   （来自 client_ext.cnf：密钥用途 / 证书类型 / 约束等，
+125	                #     约束该证书只能作为客户端证书使用，不能用于签发下级证书）
+126	                run_openssl([
+127	                    'x509', '-req', '-in', client_csr_path,
+128	                    '-CA', ca_cert_path, '-CAkey', ca_key_path,
+129	                    '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',
+130	                    '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'
+131	                ])
+132	
+133	    #打包成pfx格式
+134	    # 命令：openssl pkcs12 -export —— 把“客户端私钥(-inkey) + 客户端证书(-in) +
+135	    # 根CA证书(-certfile)”打包成 PKCS#12(PFX) 容器，-password pass:xxx 为 PFX 设置口令；
+136	    # 生成的 PFX 可导入浏览器“个人证书”，登录时浏览器即携带该证书完成客户端认证
+137	                run_openssl(
+138	                    [
+139	                        'pkcs12', '-export',
+140	                        '-out', client_pfx_path,
+141	                        '-inkey', client_key_path,
+142	                        '-in', client_cert_path,
+143	                        '-certfile', ca_cert_path,
+144	                        '-password', 'stdin',  # ← 注意：导出用的是 -password，不是 -passin
+145	                    ],
+146	                    stdin_data=password + '\n',
+147	                )
+148	
+149	                # 读取 PFX 文件的字节流并返回给上层（由接口转成文件下载给用户）
+150	                with open(client_pfx_path, 'rb') as f:
+151	                    pfx_data = f.read()
+152	                return pfx_data
+153	
+154	        # openssl 调用失败（启动失败 / 超时 / 返回码非 0）：
+155	        # OpenSSLError 的消息里已包含 exit code 与 stderr，直接打印即可
+156	        except OpenSSLError as e:
+157	                print(f"OpenSSL命令失败: {e}")
+158	                return None
+159	        # 其它异常（如临时文件读写失败）统一捕获，避免把内部异常抛给上层
+160	        except Exception as e:
+161	                print(f"生成证书过程中发生异常: {e}")
+162	                return None
+163	'''使用示例
 
 --------------------------------------------------
 >> Issue: [B107:hardcoded_password_default] Possible hardcoded password: '123456'
    Severity: Low   Confidence: Medium
    CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
    More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b107_hardcoded_password_default.html
-   Location: .\app\utils\ca_client.py:65:0
-64	# 返回：成功返回 PFX 字节流（供前端下载后导入浏览器）；任一步 openssl 失败返回 None
-65	def generate_client_cert(
-66	    username: str,
-67	    ca_cert_path: str,
-68	    ca_key_path: str,
-69	    client_ext_cnf_path: str,
-70	    days: int = 365,
-71	    password: str = '123456',
-72	    role: str = 'user',
-73	) -> Optional[bytes]:
-74	    # 全部中间产物（私钥 / CSR / 证书 / PFX）都在临时目录中生成，
-75	    # 函数退出后临时目录自动清理，客户端证书只在内存与最终返回的 PFX 字节流中存在
-76	    with tempfile.TemporaryDirectory() as tmpdir:
-77	        # 按角色重命名用户名（user_张三 / seller_李四），使证书 CN 能区分用户与商家；
-78	        # 后续登录验证时据此从 CN 还原出纯用户名（见 ca_client_crt_yanzheng.py）
-79	        if role == 'user':
-80	            username = f"{role}_{username}"
-81	        elif role == 'seller':
-82	            username = f"{role}_{username}"
-83	        else:
-84	            raise ValueError(f"没有{role}这个角色")
-85	
-86	        # 定义临时文件路径
-87	        client_key_path = os.path.join(tmpdir, f"{username}.key")
-88	        client_csr_path = os.path.join(tmpdir, f"{username}.csr")
-89	        client_cert_path = os.path.join(tmpdir, f"{username}.crt")
-90	        client_pfx_path = os.path.join(tmpdir, f"{username}.pfx")
-91	        #1.生成客户端SM2私钥
-92	        # 命令：openssl ecparam -name SM2 -genkey -out 客户端私钥
-93	        # —— 生成国密 SM2 椭圆曲线密钥对（客户端私钥，只在本函数内使用，最终打进 PFX）
-94	        try:
-95	                subprocess.run([
-96	                        'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path
-97	                    ], check=True)
-98	
-99	                #2. 生成客户端CSR
-100	                # 命令：openssl req -new —— 用私钥生成证书签名请求(CSR)：
-101	                # 内含公钥与主体信息(CN=user_用户名、emailAddress=…)，但不含私钥，
-102	                # 因此可安全地把 CSR 交给 CA(服务端)去签发证书
-103	                subprocess.run([
-104	                        'openssl', 'req', '-new', '-key', client_key_path,
-105	                        '-out', client_csr_path,
-106	                        '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'
-107	                    ], check=True)
-108	                #.4 使用根CA签发客户端证书
-109	                # 命令：openssl x509 -req -CA 根CA证书 -CAkey 根CA私钥 ...
-110	                # —— 即“CA 用自己私钥为 CSR 签名”，把请求转换成真正的 X.509 客户端证书：
-111	                #   -CAcreateserial 维护证书序列号文件；-days 指定有效期；
-112	                #   -sm3 国密摘要算法；-extfile/-extensions 附加客户端证书扩展
-113	                #   （来自 client_ext.cnf：密钥用途 / 证书类型 / 约束等，
-114	                #     约束该证书只能作为客户端证书使用，不能用于签发下级证书）
-115	                subprocess.run([
-116	                    'openssl', 'x509', '-req', '-in', client_csr_path,
-117	                    '-CA', ca_cert_path, '-CAkey', ca_key_path,
-118	                    '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',
-119	                    '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'
-120	                ], check=True)
-121	
-122	    #打包成pfx格式
-123	    # 命令：openssl pkcs12 -export —— 把“客户端私钥(-inkey) + 客户端证书(-in) +
-124	    # 根CA证书(-certfile)”打包成 PKCS#12(PFX) 容器，-password pass:xxx 为 PFX 设置口令；
-125	    # 生成的 PFX 可导入浏览器“个人证书”，登录时浏览器即携带该证书完成客户端认证
-126	                subprocess.run([
-127	                    'openssl', 'pkcs12', '-export',
-128	                    '-out', client_pfx_path,
-129	                    '-inkey', client_key_path,
-130	                    '-in', client_cert_path,
-131	                    '-certfile', ca_cert_path,
-132	                    '-password', f'pass:{password}'
-133	                ], check=True)
-134	
-135	                # 读取 PFX 文件的字节流并返回给上层（由接口转成文件下载给用户）
-136	                with open(client_pfx_path, 'rb') as f:
-137	                    pfx_data = f.read()
-138	                return pfx_data
-139	
-140	        # openssl 命令执行失败（返回码非 0）：打印命令信息与错误输出，返回 None
-141	        except subprocess.CalledProcessError as e:
-142	                print(f"OpenSSL命令失败: {e}")
-143	                if e.stderr:
-144	                    print(f"错误输出: {e.stderr.decode()}")
-145	                return None
-146	        # 其它异常（如临时文件读写失败）统一捕获，避免把内部异常抛给上层
-147	        except Exception as e:
-148	                print(f"生成证书过程中发生异常: {e}")
-149	                return None
-150	'''使用示例
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca_client.py:95:16
-94	        try:
-95	                subprocess.run([
-96	                        'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path
-97	                    ], check=True)
-98	
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client.py:95:16
-94	        try:
-95	                subprocess.run([
-96	                        'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path
-97	                    ], check=True)
-98	
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca_client.py:103:16
-102	                # 因此可安全地把 CSR 交给 CA(服务端)去签发证书
-103	                subprocess.run([
-104	                        'openssl', 'req', '-new', '-key', client_key_path,
-105	                        '-out', client_csr_path,
-106	                        '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'
-107	                    ], check=True)
-108	                #.4 使用根CA签发客户端证书
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client.py:103:16
-102	                # 因此可安全地把 CSR 交给 CA(服务端)去签发证书
-103	                subprocess.run([
-104	                        'openssl', 'req', '-new', '-key', client_key_path,
-105	                        '-out', client_csr_path,
-106	                        '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'
-107	                    ], check=True)
-108	                #.4 使用根CA签发客户端证书
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca_client.py:115:16
-114	                #     约束该证书只能作为客户端证书使用，不能用于签发下级证书）
-115	                subprocess.run([
-116	                    'openssl', 'x509', '-req', '-in', client_csr_path,
-117	                    '-CA', ca_cert_path, '-CAkey', ca_key_path,
-118	                    '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',
-119	                    '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'
-120	                ], check=True)
-121	
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client.py:115:16
-114	                #     约束该证书只能作为客户端证书使用，不能用于签发下级证书）
-115	                subprocess.run([
-116	                    'openssl', 'x509', '-req', '-in', client_csr_path,
-117	                    '-CA', ca_cert_path, '-CAkey', ca_key_path,
-118	                    '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',
-119	                    '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'
-120	                ], check=True)
-121	
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca_client.py:126:16
-125	    # 生成的 PFX 可导入浏览器“个人证书”，登录时浏览器即携带该证书完成客户端认证
-126	                subprocess.run([
-127	                    'openssl', 'pkcs12', '-export',
-128	                    '-out', client_pfx_path,
-129	                    '-inkey', client_key_path,
-130	                    '-in', client_cert_path,
-131	                    '-certfile', ca_cert_path,
-132	                    '-password', f'pass:{password}'
-133	                ], check=True)
-134	
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client.py:126:16
-125	    # 生成的 PFX 可导入浏览器“个人证书”，登录时浏览器即携带该证书完成客户端认证
-126	                subprocess.run([
-127	                    'openssl', 'pkcs12', '-export',
-128	                    '-out', client_pfx_path,
-129	                    '-inkey', client_key_path,
-130	                    '-in', client_cert_path,
-131	                    '-certfile', ca_cert_path,
-132	                    '-password', f'pass:{password}'
-133	                ], check=True)
-134	
-
---------------------------------------------------
->> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
-   Location: .\app\utils\ca_client_crt_yanzheng.py:17:0
-16	from cryptography.exceptions import UnsupportedAlgorithm
-17	import subprocess
-18	import tempfile
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client_crt_yanzheng.py:99:17
-98	        cmd = ['openssl', 'verify', '-CAfile', ca_path, cert_path]
-99	        result = subprocess.run(cmd, capture_output=True, text=True)
-100	
-
---------------------------------------------------
->> Issue: [B107:hardcoded_password_default] Possible hardcoded password: '123456'
-   Severity: Low   Confidence: Medium
-   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b107_hardcoded_password_default.html
-   Location: .\app\utils\ca_client_crt_yanzheng.py:216:0
-215	# 提取出pfx格式中的证书
-216	def extract_cert_from_pfx(pfx_data: bytes, password: str = "123456") -> bytes:
-217	    """从 PKCS#12 (PFX) 数据中提取第一个证书（PEM 格式）"""
-218	    with tempfile.NamedTemporaryFile(mode='wb', suffix='.pfx', delete=False) as pfx_file:
-219	        pfx_file.write(pfx_data)
-220	        pfx_path = pfx_file.name
-221	
-222	    with tempfile.NamedTemporaryFile(mode='wb', suffix='.pem', delete=False) as cert_file:
-223	        cert_path = cert_file.name
-224	
-225	    try:
-226	        # openssl pkcs12 命令参数说明：
-227	        #   -in pfx_path   ：读入 PFX 容器文件；
-228	        #   -nokeys        ：只导出证书、不导出私钥（验证环节不需要私钥）；
-229	        #   -clcerts       ：只提取客户端(叶子)证书，排除容器内附带的其他 CA 证书；
-230	        #   -passin pass:口令：PFX 的读取口令；
-231	        #   -out cert_path ：把提取出的证书以 PEM 文本格式写入临时文件
-232	        cmd = [
-233	            'openssl', 'pkcs12',
-234	            '-in', pfx_path,
-235	            '-nokeys', '-clcerts',
-236	            '-passin', f'pass:{password}',
-237	            '-out', cert_path
-238	        ]
-239	        subprocess.run(cmd, capture_output=True, check=True, text=True)
-240	        # 读取并返回 PEM 证书字节流
-241	        with open(cert_path, 'rb') as f:
-242	            return f.read()
-243	    except subprocess.CalledProcessError as e:
-244	        raise ValueError(f"从 PFX 提取证书失败: {e.stderr}")
-245	    finally:
-246	        Path(pfx_path).unlink(missing_ok=True)
-247	        Path(cert_path).unlink(missing_ok=True)
-248	
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client_crt_yanzheng.py:239:8
-238	        ]
-239	        subprocess.run(cmd, capture_output=True, check=True, text=True)
-240	        # 读取并返回 PEM 证书字节流
-
---------------------------------------------------
->> Issue: [B607:start_process_with_partial_path] Starting a process with a partial executable path
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html
-   Location: .\app\utils\ca_client_crt_yanzheng.py:273:17
-272	        # —— 只输出证书指纹(不输出证书全文)，-sha256 指定指纹摘要算法为 SHA-256
-273	        result = subprocess.run([
-274	            'openssl', 'x509', '-in', cert_path,
-275	            '-fingerprint', '-sha256', '-noout'
-276	        ], capture_output=True, text=True)
-277	
-
---------------------------------------------------
->> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
-   Severity: Low   Confidence: High
-   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
-   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
-   Location: .\app\utils\ca_client_crt_yanzheng.py:273:17
-272	        # —— 只输出证书指纹(不输出证书全文)，-sha256 指定指纹摘要算法为 SHA-256
-273	        result = subprocess.run([
-274	            'openssl', 'x509', '-in', cert_path,
-275	            '-fingerprint', '-sha256', '-noout'
-276	        ], capture_output=True, text=True)
-277	
+   Location: .\app\utils\ca_client_crt_yanzheng.py:220:0
+219	# 提取出pfx格式中的证书
+220	def extract_cert_from_pfx(pfx_data: bytes, password: str = "123456") -> bytes:
+221	    """从 PKCS#12 (PFX) 数据中提取第一个证书（PEM 格式）"""
+222	    with tempfile.NamedTemporaryFile(mode='wb', suffix='.pfx', delete=False) as pfx_file:
+223	        pfx_file.write(pfx_data)
+224	        pfx_path = pfx_file.name
+225	
+226	    with tempfile.NamedTemporaryFile(mode='wb', suffix='.pem', delete=False) as cert_file:
+227	        cert_path = cert_file.name
+228	
+229	    try:
+230	        # openssl pkcs12 命令参数说明：
+231	        #   -in pfx_path   ：读入 PFX 容器文件；
+232	        #   -nokeys        ：只导出证书、不导出私钥（验证环节不需要私钥）；
+233	        #   -clcerts       ：只提取客户端(叶子)证书，排除容器内附带的其他 CA 证书；
+234	        #   -passin pass:口令：PFX 的读取口令；
+235	        #   -out cert_path ：把提取出的证书以 PEM 文本格式写入临时文件
+236	
+237	        # 口令校验：非空、≤128 字符、不以 - 开头、仅允许安全字符
+238	        # （不合法时抛 ValueError，与下方口令错误的异常类型保持一致）
+239	        validate_secret(password, 'PFX 口令')
+240	
+241	        try:
+242	            run_openssl(
+243	                [
+244	                    'pkcs12',
+245	                    '-in', pfx_path,
+246	                    '-nokeys', '-clcerts',
+247	                    '-passin', 'stdin',  # ← 口令从 stdin 读，不进命令行
+248	                    '-out', cert_path,
+249	                ],
+250	                stdin_data=password + '\n',
+251	            )
+252	        except OpenSSLError as e:
+253	            raise ValueError(f'从 PFX 提取证书失败: {e}')
+254	
+255	        # 读取并返回 PEM 证书字节流
+256	        with open(cert_path, 'rb') as f:
+257	            return f.read()
+258	    finally:
+259	        Path(pfx_path).unlink(missing_ok=True)
+260	        Path(cert_path).unlink(missing_ok=True)
+261	
 
 --------------------------------------------------
 >> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
@@ -647,6 +227,34 @@ Test results:
 108	        except Exception:  # 日志失败不影响业务响应
 109	            pass
 110	        return resp
+
+--------------------------------------------------
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
+   Location: .\app\utils\openssl_runner.py:13:0
+12	import shutil
+13	import subprocess
+14	
+
+--------------------------------------------------
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
+   Location: .\app\utils\openssl_runner.py:113:17
+112	            timeout=timeout,
+113	            shell=False,      # 显式声明，防止日后被改成 True
+114	            env=env,
+115	        )
+116	    except subprocess.TimeoutExpired:
+117	        raise OpenSSLError(f'OpenSSL 执行超时（{timeout}s）：{args[0]}')
+118	    except FileNotFoundError:
+119	        raise OpenSSLError(f'找不到 OpenSSL 可执行文件：{cmd[0]}')
+120	    except OSError as e:
+121	        raise OpenSSLError(f'OpenSSL 启动失败：{e}')
+122	
 
 --------------------------------------------------
 >> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
@@ -771,19 +379,19 @@ Test results:
 --------------------------------------------------
 
 Code scanned:
-	Total lines of code: 6352
+	Total lines of code: 6500
 	Total lines skipped (#nosec): 0
 	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
 
 Run metrics:
 	Total issues (by severity):
 		Undefined: 0
-		Low: 54
+		Low: 22
 		Medium: 0
 		High: 0
 	Total issues (by confidence):
 		Undefined: 0
 		Low: 0
 		Medium: 5
-		High: 49
+		High: 17
 Files skipped (0):

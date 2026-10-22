@@ -1,4 +1,3 @@
-import subprocess
 import tempfile
 from dotenv import load_dotenv
 import os
@@ -24,32 +23,33 @@ from gmssl.sm4 import CryptSM4, SM4_DECRYPT
 #   所有中间文件位于 tempfile 临时目录，函数返回前自动清理。
 # 数据约定：key / IV / 明文 / 密文一律为 bytes。
 # =============================================================================
-# OpenSSL 路径配置
+# OpenSSL 路径与子进程调用统一由 openssl_runner 提供：
+#   - get_openssl_path()：导入时即校验 OPENSSL_PATH（绝对路径 / 存在 / 可执行 / 文件名匹配），
+#     校验不过直接抛错，避免把未校验的环境变量当命令执行
+#   - run_openssl()：统一执行入口（列表传参 / 不用 shell / 最小环境变量 / 30s 超时）
 load_dotenv()
 
-OPENSSL_PATH = os.getenv('OPENSSL_PATH')
+try:
+    # 正常情况：本模块作为 app.utils 包的成员被导入
+    from .openssl_runner import get_openssl_path, run_openssl
+except ImportError:  # 直接以脚本方式运行本文件时（python app/utils/SM4.py）的回退
+    from openssl_runner import get_openssl_path, run_openssl
+
+OPENSSL_PATH = get_openssl_path()
+
 
 # —— run_openssl_command：统一执行 OpenSSL 子进程命令的辅助函数。
 #    入参 args(list[str])：传给 OpenSSL 的参数列表(不含可执行文件本身)
-#    返回 str：命令成功时的 stdout 文本；失败(返回码非 0)时抛出异常
-#    内部步骤：subprocess 运行并捕获输出 → 检查返回码 → 非0抛异常 / 0返回stdout
+#    返回 str：命令成功时的 stdout 文本；失败(返回码非 0)时抛 OpenSSLError
+#    真正的执行逻辑已收敛到 openssl_runner.run_openssl
 def run_openssl_command(args):
     """
-    运行OpenSSL命令并返回结果
+    运行 OpenSSL 命令并返回 stdout 文本。
+
+    保留原有函数签名与返回值；路径校验、最小环境变量、超时、
+    错误类型（OpenSSLError，RuntimeError 子类）均由 openssl_runner 统一处理。
     """
-    # —— subprocess.run：以独立进程执行 [OpenSSL可执行文件] + args，
-    #     capture_output=True 捕获命令的 stdout/stderr，text=True 表示按文本读取
-    result = subprocess.run(
-        [OPENSSL_PATH] + args,
-        capture_output=True,
-        text=True
-    )
-    # OpenSSL 约定：返回码 0 表示命令成功；非 0 时把“完整命令 + stderr 错误信息”
-    # 拼装成异常抛出，方便上层调用处定位失败原因
-    if result.returncode != 0:
-        error_msg = f"OpenSSL命令执行失败: {' '.join(args)}\n错误: {result.stderr.strip()}"
-        raise Exception(error_msg)
-    # 执行成功：返回 stdout 文本（命令没有文本输出时为空字符串）
+    result = run_openssl(args)
     return result.stdout
 
 # —— generate_sm4_key：生成 SM4 会话密钥与初始向量。

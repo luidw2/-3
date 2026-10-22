@@ -14,13 +14,13 @@ ca_client_crt_yanzheng.py —— 客户端数字证书“验证 / 解析”模�
     因此信任链校验改由调用外部命令 openssl verify 完成（见文件内注释）。
 """
 from cryptography.exceptions import UnsupportedAlgorithm
-import subprocess
 import tempfile
 from pathlib import Path
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 import datetime
 from app.utils import db
+from .openssl_runner import run_openssl, validate_secret, OpenSSLError
 
 '''
 信任链认证用openssl verify -CAfile rootCA.crt client_zhangsan.crt
@@ -95,8 +95,12 @@ def verify_certificate_chain(pfx_data: bytes, root_ca_pem: bytes,password:str) -
         # 用 openssl 对“客户端证书”做签名与证书链校验（因 cryptography 不支持 SM2）：
         # verify 会用 -CAfile 指定的根 CA 重建证书链并校验各级签名
         # -CAfile 指定根 CA 证书，验证证书链
-        cmd = ['openssl', 'verify', '-CAfile', ca_path, cert_path]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        # check=False：本函数自己判断 returncode 并抛出更具体的 ValueError，
+        # 不希望 run_openssl 先抛通用异常
+        result = run_openssl(
+            ['verify', '-CAfile', ca_path, cert_path],
+            check=False,
+        )
 
         if result.returncode != 0:
             # 校验失败：openssl 返回码非 0，从 stderr/stdout 提取具体错误原因
@@ -229,19 +233,28 @@ def extract_cert_from_pfx(pfx_data: bytes, password: str = "123456") -> bytes:
         #   -clcerts       ：只提取客户端(叶子)证书，排除容器内附带的其他 CA 证书；
         #   -passin pass:口令：PFX 的读取口令；
         #   -out cert_path ：把提取出的证书以 PEM 文本格式写入临时文件
-        cmd = [
-            'openssl', 'pkcs12',
-            '-in', pfx_path,
-            '-nokeys', '-clcerts',
-            '-passin', f'pass:{password}',
-            '-out', cert_path
-        ]
-        subprocess.run(cmd, capture_output=True, check=True, text=True)
+
+        # 口令校验：非空、≤128 字符、不以 - 开头、仅允许安全字符
+        # （不合法时抛 ValueError，与下方口令错误的异常类型保持一致）
+        validate_secret(password, 'PFX 口令')
+
+        try:
+            run_openssl(
+                [
+                    'pkcs12',
+                    '-in', pfx_path,
+                    '-nokeys', '-clcerts',
+                    '-passin', 'stdin',  # ← 口令从 stdin 读，不进命令行
+                    '-out', cert_path,
+                ],
+                stdin_data=password + '\n',
+            )
+        except OpenSSLError as e:
+            raise ValueError(f'从 PFX 提取证书失败: {e}')
+
         # 读取并返回 PEM 证书字节流
         with open(cert_path, 'rb') as f:
             return f.read()
-    except subprocess.CalledProcessError as e:
-        raise ValueError(f"从 PFX 提取证书失败: {e.stderr}")
     finally:
         Path(pfx_path).unlink(missing_ok=True)
         Path(cert_path).unlink(missing_ok=True)
@@ -270,10 +283,11 @@ def extract_cert_thumbprint(pfx_data: bytes, password: str) -> str | None:
 
         # 计算证书指纹：openssl x509 -fingerprint -sha256 -noout
         # —— 只输出证书指纹(不输出证书全文)，-sha256 指定指纹摘要算法为 SHA-256
-        result = subprocess.run([
-            'openssl', 'x509', '-in', cert_path,
-            '-fingerprint', '-sha256', '-noout'
-        ], capture_output=True, text=True)
+        # check=False：失败时由下方判断 returncode 后返回 None
+        result = run_openssl(
+            ['x509', '-in', cert_path, '-fingerprint', '-sha256', '-noout'],
+            check=False,
+        )
 
         if result.returncode != 0:
             return None

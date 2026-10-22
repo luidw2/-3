@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2026-10-20T03:17:43Z",
+  "generated_at": "2026-10-22T01:24:34Z",
   "metrics": {
     ".\\app\\__init__.py": {
       "CONFIDENCE.HIGH": 0,
@@ -102,7 +102,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 92,
+      "loc": 114,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -245,7 +245,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 128,
+      "loc": 143,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -380,12 +380,12 @@
       "skipped_tests": 0
     },
     ".\\app\\utils\\SM2.py": {
-      "CONFIDENCE.HIGH": 6,
+      "CONFIDENCE.HIGH": 3,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 6,
+      "SEVERITY.LOW": 3,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 279,
@@ -406,15 +406,15 @@
       "skipped_tests": 0
     },
     ".\\app\\utils\\SM4.py": {
-      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 2,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 124,
+      "loc": 122,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -458,12 +458,12 @@
       "skipped_tests": 0
     },
     ".\\app\\utils\\ca.py": {
-      "CONFIDENCE.HIGH": 15,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 15,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 157,
@@ -471,28 +471,28 @@
       "skipped_tests": 0
     },
     ".\\app\\utils\\ca_client.py": {
-      "CONFIDENCE.HIGH": 9,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 1,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 10,
+      "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 85,
+      "loc": 90,
       "nosec": 0,
       "skipped_tests": 0
     },
     ".\\app\\utils\\ca_client_crt_yanzheng.py": {
-      "CONFIDENCE.HIGH": 5,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 1,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 6,
+      "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 204,
+      "loc": 210,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -558,6 +558,19 @@
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 23,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    ".\\app\\utils\\openssl_runner.py": {
+      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 2,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 102,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -666,15 +679,15 @@
       "skipped_tests": 0
     },
     "_totals": {
-      "CONFIDENCE.HIGH": 49,
+      "CONFIDENCE.HIGH": 17,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 5,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 54,
+      "SEVERITY.LOW": 22,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 6352,
+      "loc": 6500,
       "nosec": 0,
       "skipped_tests": 0
     }
@@ -707,50 +720,6 @@
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
       "test_id": "B105",
       "test_name": "hardcoded_password_string"
-    },
-    {
-      "code": "1 import subprocess\n2 import tempfile\n3 from dotenv import load_dotenv\n",
-      "col_offset": 0,
-      "end_col_offset": 17,
-      "filename": ".\\app\\utils\\SM2.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Consider possible security implications associated with the subprocess module.",
-      "line_number": 1,
-      "line_range": [
-        1
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
-      "test_id": "B404",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "45     #     capture_output=True \u6355\u83b7\u547d\u4ee4\u7684 stdout/stderr\uff0ctext=True \u8868\u793a\u6309\u6587\u672c\u8bfb\u53d6\n46     result = subprocess.run(\n47         [OPENSSL_PATH] + args,\n48         capture_output=True,\n49         text=True\n50     )\n51     # OpenSSL \u7ea6\u5b9a\uff1a\u8fd4\u56de\u7801 0 \u8868\u793a\u547d\u4ee4\u6210\u529f\uff1b\u975e 0 \u65f6\u628a\u201c\u5b8c\u6574\u547d\u4ee4 + stderr \u9519\u8bef\u4fe1\u606f\u201d\n",
-      "col_offset": 13,
-      "end_col_offset": 5,
-      "filename": ".\\app\\utils\\SM2.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 46,
-      "line_range": [
-        46,
-        47,
-        48,
-        49,
-        50
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
     },
     {
       "code": "84                 break                 # \u67d0\u4e00\u79cd\u5199\u6cd5\u6210\u529f\u751f\u6210\u540e\u7acb\u5373\u8df3\u51fa\u5faa\u73af\n85             except:\n86                 continue              # \u5f53\u524d\u5199\u6cd5\u5931\u8d25(\u4e0d\u652f\u6301/\u62a5\u9519)\u5219\u6362\u4e0b\u4e00\u79cd\u518d\u8bd5\n87         else:\n",
@@ -816,442 +785,7 @@
       "test_name": "try_except_continue"
     },
     {
-      "code": "278         # \u53ea\u9700\u6839\u636e\u547d\u4ee4\u7684\u9000\u51fa\u7801(returncode)\u5224\u65ad\u9a8c\u8bc1\u7ed3\u679c\n279         result = subprocess.run([\n280             OPENSSL_PATH, 'dgst', '-verify', public_key_path, \n281             '-out', os.devnull, '-sm3', '-signature', signature_path, data_path\n282         ], capture_output=True)\n283         \n",
-      "col_offset": 17,
-      "end_col_offset": 31,
-      "filename": ".\\app\\utils\\SM2.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 279,
-      "line_range": [
-        279,
-        280,
-        281,
-        282
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "1 import subprocess\n2 import tempfile\n3 from dotenv import load_dotenv\n",
-      "col_offset": 0,
-      "end_col_offset": 17,
-      "filename": ".\\app\\utils\\SM4.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Consider possible security implications associated with the subprocess module.",
-      "line_number": 1,
-      "line_range": [
-        1
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
-      "test_id": "B404",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "41     #     capture_output=True \u6355\u83b7\u547d\u4ee4\u7684 stdout/stderr\uff0ctext=True \u8868\u793a\u6309\u6587\u672c\u8bfb\u53d6\n42     result = subprocess.run(\n43         [OPENSSL_PATH] + args,\n44         capture_output=True,\n45         text=True\n46     )\n47     # OpenSSL \u7ea6\u5b9a\uff1a\u8fd4\u56de\u7801 0 \u8868\u793a\u547d\u4ee4\u6210\u529f\uff1b\u975e 0 \u65f6\u628a\u201c\u5b8c\u6574\u547d\u4ee4 + stderr \u9519\u8bef\u4fe1\u606f\u201d\n",
-      "col_offset": 13,
-      "end_col_offset": 5,
-      "filename": ".\\app\\utils\\SM4.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 42,
-      "line_range": [
-        42,
-        43,
-        44,
-        45,
-        46
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "17 import os\n18 import subprocess\n19 # \u786e\u4fddcertificates\u76ee\u5f55\u5b58\u5728\n",
-      "col_offset": 0,
-      "end_col_offset": 17,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Consider possible security implications associated with the subprocess module.",
-      "line_number": 18,
-      "line_range": [
-        18
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
-      "test_id": "B404",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "73         # \u2014\u2014 \u751f\u6210\u56fd\u5bc6 SM2 \u692d\u5706\u66f2\u7ebf\u5bc6\u94a5\u5bf9\u5e76\u5199\u5165\u79c1\u94a5\u6587\u4ef6\uff08CA \u79c1\u94a5\uff0c\u9700\u59a5\u5584\u4fdd\u7ba1\uff09\n74         subprocess.run([\n75             'openssl','ecparam','-name','SM2','-genkey','-out', ca_sm2_key_path\n76         ], check=True)\n77     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 74,
-      "line_range": [
-        74,
-        75,
-        76
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "73         # \u2014\u2014 \u751f\u6210\u56fd\u5bc6 SM2 \u692d\u5706\u66f2\u7ebf\u5bc6\u94a5\u5bf9\u5e76\u5199\u5165\u79c1\u94a5\u6587\u4ef6\uff08CA \u79c1\u94a5\uff0c\u9700\u59a5\u5584\u4fdd\u7ba1\uff09\n74         subprocess.run([\n75             'openssl','ecparam','-name','SM2','-genkey','-out', ca_sm2_key_path\n76         ], check=True)\n77     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 74,
-      "line_range": [
-        74,
-        75,
-        76
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "91         #    -sm3\uff1a\u4f7f\u7528\u56fd\u5bc6\u6458\u8981\u7b97\u6cd5 SM3\uff08\u4e0e SM2 \u914d\u5957\u7ec4\u6210\u56fd\u5bc6\u4f53\u7cfb\uff09\n92         subprocess.run([\n93             'openssl','req', '-x509','-new','-nodes','-key',ca_sm2_key_path,\n94             '-days','3650','-out',ca_sm2_cert_path, '-subj',\n95             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA','-sm3'\n96         ], check=True)\n97     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 92,
-      "line_range": [
-        92,
-        93,
-        94,
-        95,
-        96
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "91         #    -sm3\uff1a\u4f7f\u7528\u56fd\u5bc6\u6458\u8981\u7b97\u6cd5 SM3\uff08\u4e0e SM2 \u914d\u5957\u7ec4\u6210\u56fd\u5bc6\u4f53\u7cfb\uff09\n92         subprocess.run([\n93             'openssl','req', '-x509','-new','-nodes','-key',ca_sm2_key_path,\n94             '-days','3650','-out',ca_sm2_cert_path, '-subj',\n95             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA','-sm3'\n96         ], check=True)\n97     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 92,
-      "line_range": [
-        92,
-        93,
-        94,
-        95,
-        96
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "114         # \u2014\u2014 \u751f\u6210 4096 \u4f4d RSA \u79c1\u94a5\uff08\u4f5c\u4e3a RSA CA \u7684\u79c1\u94a5\uff09\n115         subprocess.run([\n116             'openssl','genrsa','-out', ca_rsa_key_path,'4096'\n117         ], check=True)\n118     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 115,
-      "line_range": [
-        115,
-        116,
-        117
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "114         # \u2014\u2014 \u751f\u6210 4096 \u4f4d RSA \u79c1\u94a5\uff08\u4f5c\u4e3a RSA CA \u7684\u79c1\u94a5\uff09\n115         subprocess.run([\n116             'openssl','genrsa','-out', ca_rsa_key_path,'4096'\n117         ], check=True)\n118     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 115,
-      "line_range": [
-        115,
-        116,
-        117
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "131         #    \u4e3b\u4f53\u4fe1\u606f\u4e0e SM2 \u6839\u8bc1\u4e66\u4fdd\u6301\u4e00\u81f4\uff1aMySecureECommerceCA\uff09\n132         subprocess.run([\n133             'openssl','req', '-x509','-new','-nodes','-key',ca_rsa_key_path,\n134             '-sha256','-days','3650','-out',ca_rsa_cert_path,'-subj',\n135             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA'\n136         ], check=True)\n137     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 132,
-      "line_range": [
-        132,
-        133,
-        134,
-        135,
-        136
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "131         #    \u4e3b\u4f53\u4fe1\u606f\u4e0e SM2 \u6839\u8bc1\u4e66\u4fdd\u6301\u4e00\u81f4\uff1aMySecureECommerceCA\uff09\n132         subprocess.run([\n133             'openssl','req', '-x509','-new','-nodes','-key',ca_rsa_key_path,\n134             '-sha256','-days','3650','-out',ca_rsa_cert_path,'-subj',\n135             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA'\n136         ], check=True)\n137     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 132,
-      "line_range": [
-        132,
-        133,
-        134,
-        135,
-        136
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "146         # \u2014\u2014 \u751f\u6210\u670d\u52a1\u7aef RSA \u79c1\u94a5\uff082048 \u4f4d\uff0c\u4f9b HTTPS \u670d\u52a1\u7aef\u8bc1\u4e66\u4f7f\u7528\uff09\n147         subprocess.run([\n148             'openssl', 'genrsa', '-out',server_key_path, '2048'\n149         ], check=True)\n150     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 147,
-      "line_range": [
-        147,
-        148,
-        149
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "146         # \u2014\u2014 \u751f\u6210\u670d\u52a1\u7aef RSA \u79c1\u94a5\uff082048 \u4f4d\uff0c\u4f9b HTTPS \u670d\u52a1\u7aef\u8bc1\u4e66\u4f7f\u7528\uff09\n147         subprocess.run([\n148             'openssl', 'genrsa', '-out',server_key_path, '2048'\n149         ], check=True)\n150     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 147,
-      "line_range": [
-        147,
-        148,
-        149
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "160         #    \u4e3b\u4f53 CN=localhost\uff08\u672c\u673a\u90e8\u7f72\u573a\u666f\uff0c\u670d\u52a1\u7aef\u8bc1\u4e66 CN \u4f7f\u7528 localhost\uff09\n161         subprocess.run([\n162             'openssl', 'req', '-new','-key', server_key_path,\n163             '-out', server_csr_path, '-subj',\n164             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=localhost'\n165         ], check=True)\n166     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 161,
-      "line_range": [
-        161,
-        162,
-        163,
-        164,
-        165
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "160         #    \u4e3b\u4f53 CN=localhost\uff08\u672c\u673a\u90e8\u7f72\u573a\u666f\uff0c\u670d\u52a1\u7aef\u8bc1\u4e66 CN \u4f7f\u7528 localhost\uff09\n161         subprocess.run([\n162             'openssl', 'req', '-new','-key', server_key_path,\n163             '-out', server_csr_path, '-subj',\n164             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=localhost'\n165         ], check=True)\n166     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 161,
-      "line_range": [
-        161,
-        162,
-        163,
-        164,
-        165
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "223         # \u7b7e\u53d1\u5b8c\u6210\u540e server.key + server.crt \u5373\u4e3a\u670d\u52a1\u7aef\u53ef\u7528\u7684 HTTPS \u8bc1\u4e66\u5bf9\u3002\n224         subprocess.run([\n225         'openssl', 'x509', '-req' ,'-in',server_csr_path,\n226         '-CA', ca_rsa_cert_path,\n227         '-CAkey', ca_rsa_key_path,\n228         '-CAcreateserial','-out',server_cert_path,'-days', '365' ,'-sha256' ,\n229         '-extfile', server_ext_cnf_path, '-extensions','v3_req'\n230         ], check=True)\n231     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 224,
-      "line_range": [
-        224,
-        225,
-        226,
-        227,
-        228,
-        229,
-        230
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "223         # \u7b7e\u53d1\u5b8c\u6210\u540e server.key + server.crt \u5373\u4e3a\u670d\u52a1\u7aef\u53ef\u7528\u7684 HTTPS \u8bc1\u4e66\u5bf9\u3002\n224         subprocess.run([\n225         'openssl', 'x509', '-req' ,'-in',server_csr_path,\n226         '-CA', ca_rsa_cert_path,\n227         '-CAkey', ca_rsa_key_path,\n228         '-CAcreateserial','-out',server_cert_path,'-days', '365' ,'-sha256' ,\n229         '-extfile', server_ext_cnf_path, '-extensions','v3_req'\n230         ], check=True)\n231     except subprocess.CalledProcessError as e:\n",
-      "col_offset": 8,
-      "end_col_offset": 22,
-      "filename": ".\\app\\utils\\ca.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 224,
-      "line_range": [
-        224,
-        225,
-        226,
-        227,
-        228,
-        229,
-        230
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "16 import os\n17 import subprocess\n18 import tempfile\n",
-      "col_offset": 0,
-      "end_col_offset": 17,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Consider possible security implications associated with the subprocess module.",
-      "line_number": 17,
-      "line_range": [
-        17
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
-      "test_id": "B404",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "64 # \u8fd4\u56de\uff1a\u6210\u529f\u8fd4\u56de PFX \u5b57\u8282\u6d41\uff08\u4f9b\u524d\u7aef\u4e0b\u8f7d\u540e\u5bfc\u5165\u6d4f\u89c8\u5668\uff09\uff1b\u4efb\u4e00\u6b65 openssl \u5931\u8d25\u8fd4\u56de None\n65 def generate_client_cert(\n66     username: str,\n67     ca_cert_path: str,\n68     ca_key_path: str,\n69     client_ext_cnf_path: str,\n70     days: int = 365,\n71     password: str = '123456',\n72     role: str = 'user',\n73 ) -> Optional[bytes]:\n74     # \u5168\u90e8\u4e2d\u95f4\u4ea7\u7269\uff08\u79c1\u94a5 / CSR / \u8bc1\u4e66 / PFX\uff09\u90fd\u5728\u4e34\u65f6\u76ee\u5f55\u4e2d\u751f\u6210\uff0c\n75     # \u51fd\u6570\u9000\u51fa\u540e\u4e34\u65f6\u76ee\u5f55\u81ea\u52a8\u6e05\u7406\uff0c\u5ba2\u6237\u7aef\u8bc1\u4e66\u53ea\u5728\u5185\u5b58\u4e0e\u6700\u7ec8\u8fd4\u56de\u7684 PFX \u5b57\u8282\u6d41\u4e2d\u5b58\u5728\n76     with tempfile.TemporaryDirectory() as tmpdir:\n77         # \u6309\u89d2\u8272\u91cd\u547d\u540d\u7528\u6237\u540d\uff08user_\u5f20\u4e09 / seller_\u674e\u56db\uff09\uff0c\u4f7f\u8bc1\u4e66 CN \u80fd\u533a\u5206\u7528\u6237\u4e0e\u5546\u5bb6\uff1b\n78         # \u540e\u7eed\u767b\u5f55\u9a8c\u8bc1\u65f6\u636e\u6b64\u4ece CN \u8fd8\u539f\u51fa\u7eaf\u7528\u6237\u540d\uff08\u89c1 ca_client_crt_yanzheng.py\uff09\n79         if role == 'user':\n80             username = f\"{role}_{username}\"\n81         elif role == 'seller':\n82             username = f\"{role}_{username}\"\n83         else:\n84             raise ValueError(f\"\u6ca1\u6709{role}\u8fd9\u4e2a\u89d2\u8272\")\n85 \n86         # \u5b9a\u4e49\u4e34\u65f6\u6587\u4ef6\u8def\u5f84\n87         client_key_path = os.path.join(tmpdir, f\"{username}.key\")\n88         client_csr_path = os.path.join(tmpdir, f\"{username}.csr\")\n89         client_cert_path = os.path.join(tmpdir, f\"{username}.crt\")\n90         client_pfx_path = os.path.join(tmpdir, f\"{username}.pfx\")\n91         #1.\u751f\u6210\u5ba2\u6237\u7aefSM2\u79c1\u94a5\n92         # \u547d\u4ee4\uff1aopenssl ecparam -name SM2 -genkey -out \u5ba2\u6237\u7aef\u79c1\u94a5\n93         # \u2014\u2014 \u751f\u6210\u56fd\u5bc6 SM2 \u692d\u5706\u66f2\u7ebf\u5bc6\u94a5\u5bf9\uff08\u5ba2\u6237\u7aef\u79c1\u94a5\uff0c\u53ea\u5728\u672c\u51fd\u6570\u5185\u4f7f\u7528\uff0c\u6700\u7ec8\u6253\u8fdb PFX\uff09\n94         try:\n95                 subprocess.run([\n96                         'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path\n97                     ], check=True)\n98 \n99                 #2. \u751f\u6210\u5ba2\u6237\u7aefCSR\n100                 # \u547d\u4ee4\uff1aopenssl req -new \u2014\u2014 \u7528\u79c1\u94a5\u751f\u6210\u8bc1\u4e66\u7b7e\u540d\u8bf7\u6c42(CSR)\uff1a\n101                 # \u5185\u542b\u516c\u94a5\u4e0e\u4e3b\u4f53\u4fe1\u606f(CN=user_\u7528\u6237\u540d\u3001emailAddress=\u2026)\uff0c\u4f46\u4e0d\u542b\u79c1\u94a5\uff0c\n102                 # \u56e0\u6b64\u53ef\u5b89\u5168\u5730\u628a CSR \u4ea4\u7ed9 CA(\u670d\u52a1\u7aef)\u53bb\u7b7e\u53d1\u8bc1\u4e66\n103                 subprocess.run([\n104                         'openssl', 'req', '-new', '-key', client_key_path,\n105                         '-out', client_csr_path,\n106                         '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'\n107                     ], check=True)\n108                 #.4 \u4f7f\u7528\u6839CA\u7b7e\u53d1\u5ba2\u6237\u7aef\u8bc1\u4e66\n109                 # \u547d\u4ee4\uff1aopenssl x509 -req -CA \u6839CA\u8bc1\u4e66 -CAkey \u6839CA\u79c1\u94a5 ...\n110                 # \u2014\u2014 \u5373\u201cCA \u7528\u81ea\u5df1\u79c1\u94a5\u4e3a CSR \u7b7e\u540d\u201d\uff0c\u628a\u8bf7\u6c42\u8f6c\u6362\u6210\u771f\u6b63\u7684 X.509 \u5ba2\u6237\u7aef\u8bc1\u4e66\uff1a\n111                 #   -CAcreateserial \u7ef4\u62a4\u8bc1\u4e66\u5e8f\u5217\u53f7\u6587\u4ef6\uff1b-days \u6307\u5b9a\u6709\u6548\u671f\uff1b\n112                 #   -sm3 \u56fd\u5bc6\u6458\u8981\u7b97\u6cd5\uff1b-extfile/-extensions \u9644\u52a0\u5ba2\u6237\u7aef\u8bc1\u4e66\u6269\u5c55\n113                 #   \uff08\u6765\u81ea client_ext.cnf\uff1a\u5bc6\u94a5\u7528\u9014 / \u8bc1\u4e66\u7c7b\u578b / \u7ea6\u675f\u7b49\uff0c\n114                 #     \u7ea6\u675f\u8be5\u8bc1\u4e66\u53ea\u80fd\u4f5c\u4e3a\u5ba2\u6237\u7aef\u8bc1\u4e66\u4f7f\u7528\uff0c\u4e0d\u80fd\u7528\u4e8e\u7b7e\u53d1\u4e0b\u7ea7\u8bc1\u4e66\uff09\n115                 subprocess.run([\n116                     'openssl', 'x509', '-req', '-in', client_csr_path,\n117                     '-CA', ca_cert_path, '-CAkey', ca_key_path,\n118                     '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',\n119                     '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'\n120                 ], check=True)\n121 \n122     #\u6253\u5305\u6210pfx\u683c\u5f0f\n123     # \u547d\u4ee4\uff1aopenssl pkcs12 -export \u2014\u2014 \u628a\u201c\u5ba2\u6237\u7aef\u79c1\u94a5(-inkey) + \u5ba2\u6237\u7aef\u8bc1\u4e66(-in) +\n124     # \u6839CA\u8bc1\u4e66(-certfile)\u201d\u6253\u5305\u6210 PKCS#12(PFX) \u5bb9\u5668\uff0c-password pass:xxx \u4e3a PFX \u8bbe\u7f6e\u53e3\u4ee4\uff1b\n125     # \u751f\u6210\u7684 PFX \u53ef\u5bfc\u5165\u6d4f\u89c8\u5668\u201c\u4e2a\u4eba\u8bc1\u4e66\u201d\uff0c\u767b\u5f55\u65f6\u6d4f\u89c8\u5668\u5373\u643a\u5e26\u8be5\u8bc1\u4e66\u5b8c\u6210\u5ba2\u6237\u7aef\u8ba4\u8bc1\n126                 subprocess.run([\n127                     'openssl', 'pkcs12', '-export',\n128                     '-out', client_pfx_path,\n129                     '-inkey', client_key_path,\n130                     '-in', client_cert_path,\n131                     '-certfile', ca_cert_path,\n132                     '-password', f'pass:{password}'\n133                 ], check=True)\n134 \n135                 # \u8bfb\u53d6 PFX \u6587\u4ef6\u7684\u5b57\u8282\u6d41\u5e76\u8fd4\u56de\u7ed9\u4e0a\u5c42\uff08\u7531\u63a5\u53e3\u8f6c\u6210\u6587\u4ef6\u4e0b\u8f7d\u7ed9\u7528\u6237\uff09\n136                 with open(client_pfx_path, 'rb') as f:\n137                     pfx_data = f.read()\n138                 return pfx_data\n139 \n140         # openssl \u547d\u4ee4\u6267\u884c\u5931\u8d25\uff08\u8fd4\u56de\u7801\u975e 0\uff09\uff1a\u6253\u5370\u547d\u4ee4\u4fe1\u606f\u4e0e\u9519\u8bef\u8f93\u51fa\uff0c\u8fd4\u56de None\n141         except subprocess.CalledProcessError as e:\n142                 print(f\"OpenSSL\u547d\u4ee4\u5931\u8d25: {e}\")\n143                 if e.stderr:\n144                     print(f\"\u9519\u8bef\u8f93\u51fa: {e.stderr.decode()}\")\n145                 return None\n146         # \u5176\u5b83\u5f02\u5e38\uff08\u5982\u4e34\u65f6\u6587\u4ef6\u8bfb\u5199\u5931\u8d25\uff09\u7edf\u4e00\u6355\u83b7\uff0c\u907f\u514d\u628a\u5185\u90e8\u5f02\u5e38\u629b\u7ed9\u4e0a\u5c42\n147         except Exception as e:\n148                 print(f\"\u751f\u6210\u8bc1\u4e66\u8fc7\u7a0b\u4e2d\u53d1\u751f\u5f02\u5e38: {e}\")\n149                 return None\n150 '''\u4f7f\u7528\u793a\u4f8b\n",
+      "code": "65 # \u8fd4\u56de\uff1a\u6210\u529f\u8fd4\u56de PFX \u5b57\u8282\u6d41\uff08\u4f9b\u524d\u7aef\u4e0b\u8f7d\u540e\u5bfc\u5165\u6d4f\u89c8\u5668\uff09\uff1b\u4efb\u4e00\u6b65 openssl \u5931\u8d25\u8fd4\u56de None\n66 def generate_client_cert(\n67     username: str,\n68     ca_cert_path: str,\n69     ca_key_path: str,\n70     client_ext_cnf_path: str,\n71     days: int = 365,\n72     password: str = '123456',\n73     role: str = 'user',\n74 ) -> Optional[bytes]:\n75     # \u5168\u90e8\u4e2d\u95f4\u4ea7\u7269\uff08\u79c1\u94a5 / CSR / \u8bc1\u4e66 / PFX\uff09\u90fd\u5728\u4e34\u65f6\u76ee\u5f55\u4e2d\u751f\u6210\uff0c\n76     # \u51fd\u6570\u9000\u51fa\u540e\u4e34\u65f6\u76ee\u5f55\u81ea\u52a8\u6e05\u7406\uff0c\u5ba2\u6237\u7aef\u8bc1\u4e66\u53ea\u5728\u5185\u5b58\u4e0e\u6700\u7ec8\u8fd4\u56de\u7684 PFX \u5b57\u8282\u6d41\u4e2d\u5b58\u5728\n77     with tempfile.TemporaryDirectory() as tmpdir:\n78         # \u2014\u2014 \u9632\u5fa1\u6027\u6821\u9a8c\uff08\u7b2c\u4e00\u9053\uff09\uff1ausername \u4f1a\u62fc\u8fdb -subj \u8bc1\u4e66\u4e3b\u4f53\u4e0e\u4e34\u65f6\u6587\u4ef6\u540d\uff0c\n79         #    \u8fd9\u91cc\u505a\u767d\u540d\u5355\u68c0\u67e5\uff0c\u675c\u7edd DN \u6ce8\u5165\uff08\u5982\u542b / \u4f1a\u6539\u53d8 DN \u7ed3\u6784\uff09\n80         #    \u4e0e\u8def\u5f84\u7a7f\u8d8a\uff08\u5982\u542b ..\\ \u4f1a\u8df3\u51fa\u4e34\u65f6\u76ee\u5f55\uff09\u3002\n81         #    \u8c03\u7528\u65b9\uff08register.py\uff09\u867d\u7136\u4e5f\u6821\u9a8c\uff0c\u4f46\u672c\u51fd\u6570\u662f\u516c\u5171\u5165\u53e3\uff0c\u9700\u81ea\u884c\u515c\u5e95\u3002\n82         if not isinstance(username, str) or not re.match(r'^[A-Za-z0-9_]+$', username):\n83             raise ValueError(f'\u7528\u6237\u540d\u542b\u975e\u6cd5\u5b57\u7b26: {username!r}')\n84 \n85         # \u2014\u2014 \u53e3\u4ee4\u6821\u9a8c\uff08\u7b2c\u4e00\u9053\uff09\uff1a\u975e\u7a7a\u3001\u2264128 \u5b57\u7b26\u3001\u4e0d\u4ee5 - \u5f00\u5934\u3001\u4ec5\u5b89\u5168\u5b57\u7b26\n86         validate_secret(password, 'PFX \u53e3\u4ee4')\n87 \n88         # \u6309\u89d2\u8272\u91cd\u547d\u540d\u7528\u6237\u540d\uff08user_\u5f20\u4e09 / seller_\u674e\u56db\uff09\uff0c\u4f7f\u8bc1\u4e66 CN \u80fd\u533a\u5206\u7528\u6237\u4e0e\u5546\u5bb6\uff1b\n89         # \u540e\u7eed\u767b\u5f55\u9a8c\u8bc1\u65f6\u636e\u6b64\u4ece CN \u8fd8\u539f\u51fa\u7eaf\u7528\u6237\u540d\uff08\u89c1 ca_client_crt_yanzheng.py\uff09\n90         if role == 'user':\n91             username = f\"{role}_{username}\"\n92         elif role == 'seller':\n93             username = f\"{role}_{username}\"\n94         else:\n95             raise ValueError(f\"\u6ca1\u6709{role}\u8fd9\u4e2a\u89d2\u8272\")\n96 \n97         # \u5b9a\u4e49\u4e34\u65f6\u6587\u4ef6\u8def\u5f84\n98         client_key_path = os.path.join(tmpdir, f\"{username}.key\")\n99         client_csr_path = os.path.join(tmpdir, f\"{username}.csr\")\n100         client_cert_path = os.path.join(tmpdir, f\"{username}.crt\")\n101         client_pfx_path = os.path.join(tmpdir, f\"{username}.pfx\")\n102         #1.\u751f\u6210\u5ba2\u6237\u7aefSM2\u79c1\u94a5\n103         # \u547d\u4ee4\uff1aopenssl ecparam -name SM2 -genkey -out \u5ba2\u6237\u7aef\u79c1\u94a5\n104         # \u2014\u2014 \u751f\u6210\u56fd\u5bc6 SM2 \u692d\u5706\u66f2\u7ebf\u5bc6\u94a5\u5bf9\uff08\u5ba2\u6237\u7aef\u79c1\u94a5\uff0c\u53ea\u5728\u672c\u51fd\u6570\u5185\u4f7f\u7528\uff0c\u6700\u7ec8\u6253\u8fdb PFX\uff09\n105         try:\n106                 run_openssl(\n107                     ['ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path]\n108                 )\n109 \n110                 #2. \u751f\u6210\u5ba2\u6237\u7aefCSR\n111                 # \u547d\u4ee4\uff1aopenssl req -new \u2014\u2014 \u7528\u79c1\u94a5\u751f\u6210\u8bc1\u4e66\u7b7e\u540d\u8bf7\u6c42(CSR)\uff1a\n112                 # \u5185\u542b\u516c\u94a5\u4e0e\u4e3b\u4f53\u4fe1\u606f(CN=user_\u7528\u6237\u540d\u3001emailAddress=\u2026)\uff0c\u4f46\u4e0d\u542b\u79c1\u94a5\uff0c\n113                 # \u56e0\u6b64\u53ef\u5b89\u5168\u5730\u628a CSR \u4ea4\u7ed9 CA(\u670d\u52a1\u7aef)\u53bb\u7b7e\u53d1\u8bc1\u4e66\n114                 run_openssl([\n115                         'req', '-new', '-key', client_key_path,\n116                         '-out', client_csr_path,\n117                         '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'\n118                     ])\n119                 #.4 \u4f7f\u7528\u6839CA\u7b7e\u53d1\u5ba2\u6237\u7aef\u8bc1\u4e66\n120                 # \u547d\u4ee4\uff1aopenssl x509 -req -CA \u6839CA\u8bc1\u4e66 -CAkey \u6839CA\u79c1\u94a5 ...\n121                 # \u2014\u2014 \u5373\u201cCA \u7528\u81ea\u5df1\u79c1\u94a5\u4e3a CSR \u7b7e\u540d\u201d\uff0c\u628a\u8bf7\u6c42\u8f6c\u6362\u6210\u771f\u6b63\u7684 X.509 \u5ba2\u6237\u7aef\u8bc1\u4e66\uff1a\n122                 #   -CAcreateserial \u7ef4\u62a4\u8bc1\u4e66\u5e8f\u5217\u53f7\u6587\u4ef6\uff1b-days \u6307\u5b9a\u6709\u6548\u671f\uff1b\n123                 #   -sm3 \u56fd\u5bc6\u6458\u8981\u7b97\u6cd5\uff1b-extfile/-extensions \u9644\u52a0\u5ba2\u6237\u7aef\u8bc1\u4e66\u6269\u5c55\n124                 #   \uff08\u6765\u81ea client_ext.cnf\uff1a\u5bc6\u94a5\u7528\u9014 / \u8bc1\u4e66\u7c7b\u578b / \u7ea6\u675f\u7b49\uff0c\n125                 #     \u7ea6\u675f\u8be5\u8bc1\u4e66\u53ea\u80fd\u4f5c\u4e3a\u5ba2\u6237\u7aef\u8bc1\u4e66\u4f7f\u7528\uff0c\u4e0d\u80fd\u7528\u4e8e\u7b7e\u53d1\u4e0b\u7ea7\u8bc1\u4e66\uff09\n126                 run_openssl([\n127                     'x509', '-req', '-in', client_csr_path,\n128                     '-CA', ca_cert_path, '-CAkey', ca_key_path,\n129                     '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',\n130                     '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'\n131                 ])\n132 \n133     #\u6253\u5305\u6210pfx\u683c\u5f0f\n134     # \u547d\u4ee4\uff1aopenssl pkcs12 -export \u2014\u2014 \u628a\u201c\u5ba2\u6237\u7aef\u79c1\u94a5(-inkey) + \u5ba2\u6237\u7aef\u8bc1\u4e66(-in) +\n135     # \u6839CA\u8bc1\u4e66(-certfile)\u201d\u6253\u5305\u6210 PKCS#12(PFX) \u5bb9\u5668\uff0c-password pass:xxx \u4e3a PFX \u8bbe\u7f6e\u53e3\u4ee4\uff1b\n136     # \u751f\u6210\u7684 PFX \u53ef\u5bfc\u5165\u6d4f\u89c8\u5668\u201c\u4e2a\u4eba\u8bc1\u4e66\u201d\uff0c\u767b\u5f55\u65f6\u6d4f\u89c8\u5668\u5373\u643a\u5e26\u8be5\u8bc1\u4e66\u5b8c\u6210\u5ba2\u6237\u7aef\u8ba4\u8bc1\n137                 run_openssl(\n138                     [\n139                         'pkcs12', '-export',\n140                         '-out', client_pfx_path,\n141                         '-inkey', client_key_path,\n142                         '-in', client_cert_path,\n143                         '-certfile', ca_cert_path,\n144                         '-password', 'stdin',  # \u2190 \u6ce8\u610f\uff1a\u5bfc\u51fa\u7528\u7684\u662f -password\uff0c\u4e0d\u662f -passin\n145                     ],\n146                     stdin_data=password + '\\n',\n147                 )\n148 \n149                 # \u8bfb\u53d6 PFX \u6587\u4ef6\u7684\u5b57\u8282\u6d41\u5e76\u8fd4\u56de\u7ed9\u4e0a\u5c42\uff08\u7531\u63a5\u53e3\u8f6c\u6210\u6587\u4ef6\u4e0b\u8f7d\u7ed9\u7528\u6237\uff09\n150                 with open(client_pfx_path, 'rb') as f:\n151                     pfx_data = f.read()\n152                 return pfx_data\n153 \n154         # openssl \u8c03\u7528\u5931\u8d25\uff08\u542f\u52a8\u5931\u8d25 / \u8d85\u65f6 / \u8fd4\u56de\u7801\u975e 0\uff09\uff1a\n155         # OpenSSLError \u7684\u6d88\u606f\u91cc\u5df2\u5305\u542b exit code \u4e0e stderr\uff0c\u76f4\u63a5\u6253\u5370\u5373\u53ef\n156         except OpenSSLError as e:\n157                 print(f\"OpenSSL\u547d\u4ee4\u5931\u8d25: {e}\")\n158                 return None\n159         # \u5176\u5b83\u5f02\u5e38\uff08\u5982\u4e34\u65f6\u6587\u4ef6\u8bfb\u5199\u5931\u8d25\uff09\u7edf\u4e00\u6355\u83b7\uff0c\u907f\u514d\u628a\u5185\u90e8\u5f02\u5e38\u629b\u7ed9\u4e0a\u5c42\n160         except Exception as e:\n161                 print(f\"\u751f\u6210\u8bc1\u4e66\u8fc7\u7a0b\u4e2d\u53d1\u751f\u5f02\u5e38: {e}\")\n162                 return None\n163 '''\u4f7f\u7528\u793a\u4f8b\n",
       "col_offset": 0,
       "end_col_offset": 27,
       "filename": ".\\app\\utils\\ca_client.py",
@@ -1262,9 +796,8 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Possible hardcoded password: '123456'",
-      "line_number": 65,
+      "line_number": 66,
       "line_range": [
-        65,
         66,
         67,
         68,
@@ -1348,250 +881,27 @@
         146,
         147,
         148,
-        149
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b107_hardcoded_password_default.html",
       "test_id": "B107",
       "test_name": "hardcoded_password_default"
     },
     {
-      "code": "94         try:\n95                 subprocess.run([\n96                         'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path\n97                     ], check=True)\n98 \n",
-      "col_offset": 16,
-      "end_col_offset": 34,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 95,
-      "line_range": [
-        95,
-        96,
-        97
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "94         try:\n95                 subprocess.run([\n96                         'openssl', 'ecparam', '-name', 'SM2', '-genkey', '-out', client_key_path\n97                     ], check=True)\n98 \n",
-      "col_offset": 16,
-      "end_col_offset": 34,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 95,
-      "line_range": [
-        95,
-        96,
-        97
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "102                 # \u56e0\u6b64\u53ef\u5b89\u5168\u5730\u628a CSR \u4ea4\u7ed9 CA(\u670d\u52a1\u7aef)\u53bb\u7b7e\u53d1\u8bc1\u4e66\n103                 subprocess.run([\n104                         'openssl', 'req', '-new', '-key', client_key_path,\n105                         '-out', client_csr_path,\n106                         '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'\n107                     ], check=True)\n108                 #.4 \u4f7f\u7528\u6839CA\u7b7e\u53d1\u5ba2\u6237\u7aef\u8bc1\u4e66\n",
-      "col_offset": 16,
-      "end_col_offset": 34,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 103,
-      "line_range": [
-        103,
-        104,
-        105,
-        106,
-        107
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "102                 # \u56e0\u6b64\u53ef\u5b89\u5168\u5730\u628a CSR \u4ea4\u7ed9 CA(\u670d\u52a1\u7aef)\u53bb\u7b7e\u53d1\u8bc1\u4e66\n103                 subprocess.run([\n104                         'openssl', 'req', '-new', '-key', client_key_path,\n105                         '-out', client_csr_path,\n106                         '-subj', f'/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN={username}/emailAddress=zhangsan@uestc.edu.cn'\n107                     ], check=True)\n108                 #.4 \u4f7f\u7528\u6839CA\u7b7e\u53d1\u5ba2\u6237\u7aef\u8bc1\u4e66\n",
-      "col_offset": 16,
-      "end_col_offset": 34,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 103,
-      "line_range": [
-        103,
-        104,
-        105,
-        106,
-        107
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "114                 #     \u7ea6\u675f\u8be5\u8bc1\u4e66\u53ea\u80fd\u4f5c\u4e3a\u5ba2\u6237\u7aef\u8bc1\u4e66\u4f7f\u7528\uff0c\u4e0d\u80fd\u7528\u4e8e\u7b7e\u53d1\u4e0b\u7ea7\u8bc1\u4e66\uff09\n115                 subprocess.run([\n116                     'openssl', 'x509', '-req', '-in', client_csr_path,\n117                     '-CA', ca_cert_path, '-CAkey', ca_key_path,\n118                     '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',\n119                     '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'\n120                 ], check=True)\n121 \n",
-      "col_offset": 16,
-      "end_col_offset": 30,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 115,
-      "line_range": [
-        115,
-        116,
-        117,
-        118,
-        119,
-        120
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "114                 #     \u7ea6\u675f\u8be5\u8bc1\u4e66\u53ea\u80fd\u4f5c\u4e3a\u5ba2\u6237\u7aef\u8bc1\u4e66\u4f7f\u7528\uff0c\u4e0d\u80fd\u7528\u4e8e\u7b7e\u53d1\u4e0b\u7ea7\u8bc1\u4e66\uff09\n115                 subprocess.run([\n116                     'openssl', 'x509', '-req', '-in', client_csr_path,\n117                     '-CA', ca_cert_path, '-CAkey', ca_key_path,\n118                     '-CAcreateserial', '-out', client_cert_path, '-days', f'{days}',\n119                     '-sm3', '-extfile', client_ext_cnf_path, '-extensions', 'v3_req'\n120                 ], check=True)\n121 \n",
-      "col_offset": 16,
-      "end_col_offset": 30,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 115,
-      "line_range": [
-        115,
-        116,
-        117,
-        118,
-        119,
-        120
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "125     # \u751f\u6210\u7684 PFX \u53ef\u5bfc\u5165\u6d4f\u89c8\u5668\u201c\u4e2a\u4eba\u8bc1\u4e66\u201d\uff0c\u767b\u5f55\u65f6\u6d4f\u89c8\u5668\u5373\u643a\u5e26\u8be5\u8bc1\u4e66\u5b8c\u6210\u5ba2\u6237\u7aef\u8ba4\u8bc1\n126                 subprocess.run([\n127                     'openssl', 'pkcs12', '-export',\n128                     '-out', client_pfx_path,\n129                     '-inkey', client_key_path,\n130                     '-in', client_cert_path,\n131                     '-certfile', ca_cert_path,\n132                     '-password', f'pass:{password}'\n133                 ], check=True)\n134 \n",
-      "col_offset": 16,
-      "end_col_offset": 30,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 126,
-      "line_range": [
-        126,
-        127,
-        128,
-        129,
-        130,
-        131,
-        132,
-        133
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "125     # \u751f\u6210\u7684 PFX \u53ef\u5bfc\u5165\u6d4f\u89c8\u5668\u201c\u4e2a\u4eba\u8bc1\u4e66\u201d\uff0c\u767b\u5f55\u65f6\u6d4f\u89c8\u5668\u5373\u643a\u5e26\u8be5\u8bc1\u4e66\u5b8c\u6210\u5ba2\u6237\u7aef\u8ba4\u8bc1\n126                 subprocess.run([\n127                     'openssl', 'pkcs12', '-export',\n128                     '-out', client_pfx_path,\n129                     '-inkey', client_key_path,\n130                     '-in', client_cert_path,\n131                     '-certfile', ca_cert_path,\n132                     '-password', f'pass:{password}'\n133                 ], check=True)\n134 \n",
-      "col_offset": 16,
-      "end_col_offset": 30,
-      "filename": ".\\app\\utils\\ca_client.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 126,
-      "line_range": [
-        126,
-        127,
-        128,
-        129,
-        130,
-        131,
-        132,
-        133
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "16 from cryptography.exceptions import UnsupportedAlgorithm\n17 import subprocess\n18 import tempfile\n",
-      "col_offset": 0,
-      "end_col_offset": 17,
-      "filename": ".\\app\\utils\\ca_client_crt_yanzheng.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Consider possible security implications associated with the subprocess module.",
-      "line_number": 17,
-      "line_range": [
-        17
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
-      "test_id": "B404",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "98         cmd = ['openssl', 'verify', '-CAfile', ca_path, cert_path]\n99         result = subprocess.run(cmd, capture_output=True, text=True)\n100 \n",
-      "col_offset": 17,
-      "end_col_offset": 68,
-      "filename": ".\\app\\utils\\ca_client_crt_yanzheng.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 99,
-      "line_range": [
-        99
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "215 # \u63d0\u53d6\u51fapfx\u683c\u5f0f\u4e2d\u7684\u8bc1\u4e66\n216 def extract_cert_from_pfx(pfx_data: bytes, password: str = \"123456\") -> bytes:\n217     \"\"\"\u4ece PKCS#12 (PFX) \u6570\u636e\u4e2d\u63d0\u53d6\u7b2c\u4e00\u4e2a\u8bc1\u4e66\uff08PEM \u683c\u5f0f\uff09\"\"\"\n218     with tempfile.NamedTemporaryFile(mode='wb', suffix='.pfx', delete=False) as pfx_file:\n219         pfx_file.write(pfx_data)\n220         pfx_path = pfx_file.name\n221 \n222     with tempfile.NamedTemporaryFile(mode='wb', suffix='.pem', delete=False) as cert_file:\n223         cert_path = cert_file.name\n224 \n225     try:\n226         # openssl pkcs12 \u547d\u4ee4\u53c2\u6570\u8bf4\u660e\uff1a\n227         #   -in pfx_path   \uff1a\u8bfb\u5165 PFX \u5bb9\u5668\u6587\u4ef6\uff1b\n228         #   -nokeys        \uff1a\u53ea\u5bfc\u51fa\u8bc1\u4e66\u3001\u4e0d\u5bfc\u51fa\u79c1\u94a5\uff08\u9a8c\u8bc1\u73af\u8282\u4e0d\u9700\u8981\u79c1\u94a5\uff09\uff1b\n229         #   -clcerts       \uff1a\u53ea\u63d0\u53d6\u5ba2\u6237\u7aef(\u53f6\u5b50)\u8bc1\u4e66\uff0c\u6392\u9664\u5bb9\u5668\u5185\u9644\u5e26\u7684\u5176\u4ed6 CA \u8bc1\u4e66\uff1b\n230         #   -passin pass:\u53e3\u4ee4\uff1aPFX \u7684\u8bfb\u53d6\u53e3\u4ee4\uff1b\n231         #   -out cert_path \uff1a\u628a\u63d0\u53d6\u51fa\u7684\u8bc1\u4e66\u4ee5 PEM \u6587\u672c\u683c\u5f0f\u5199\u5165\u4e34\u65f6\u6587\u4ef6\n232         cmd = [\n233             'openssl', 'pkcs12',\n234             '-in', pfx_path,\n235             '-nokeys', '-clcerts',\n236             '-passin', f'pass:{password}',\n237             '-out', cert_path\n238         ]\n239         subprocess.run(cmd, capture_output=True, check=True, text=True)\n240         # \u8bfb\u53d6\u5e76\u8fd4\u56de PEM \u8bc1\u4e66\u5b57\u8282\u6d41\n241         with open(cert_path, 'rb') as f:\n242             return f.read()\n243     except subprocess.CalledProcessError as e:\n244         raise ValueError(f\"\u4ece PFX \u63d0\u53d6\u8bc1\u4e66\u5931\u8d25: {e.stderr}\")\n245     finally:\n246         Path(pfx_path).unlink(missing_ok=True)\n247         Path(cert_path).unlink(missing_ok=True)\n248 \n",
+      "code": "219 # \u63d0\u53d6\u51fapfx\u683c\u5f0f\u4e2d\u7684\u8bc1\u4e66\n220 def extract_cert_from_pfx(pfx_data: bytes, password: str = \"123456\") -> bytes:\n221     \"\"\"\u4ece PKCS#12 (PFX) \u6570\u636e\u4e2d\u63d0\u53d6\u7b2c\u4e00\u4e2a\u8bc1\u4e66\uff08PEM \u683c\u5f0f\uff09\"\"\"\n222     with tempfile.NamedTemporaryFile(mode='wb', suffix='.pfx', delete=False) as pfx_file:\n223         pfx_file.write(pfx_data)\n224         pfx_path = pfx_file.name\n225 \n226     with tempfile.NamedTemporaryFile(mode='wb', suffix='.pem', delete=False) as cert_file:\n227         cert_path = cert_file.name\n228 \n229     try:\n230         # openssl pkcs12 \u547d\u4ee4\u53c2\u6570\u8bf4\u660e\uff1a\n231         #   -in pfx_path   \uff1a\u8bfb\u5165 PFX \u5bb9\u5668\u6587\u4ef6\uff1b\n232         #   -nokeys        \uff1a\u53ea\u5bfc\u51fa\u8bc1\u4e66\u3001\u4e0d\u5bfc\u51fa\u79c1\u94a5\uff08\u9a8c\u8bc1\u73af\u8282\u4e0d\u9700\u8981\u79c1\u94a5\uff09\uff1b\n233         #   -clcerts       \uff1a\u53ea\u63d0\u53d6\u5ba2\u6237\u7aef(\u53f6\u5b50)\u8bc1\u4e66\uff0c\u6392\u9664\u5bb9\u5668\u5185\u9644\u5e26\u7684\u5176\u4ed6 CA \u8bc1\u4e66\uff1b\n234         #   -passin pass:\u53e3\u4ee4\uff1aPFX \u7684\u8bfb\u53d6\u53e3\u4ee4\uff1b\n235         #   -out cert_path \uff1a\u628a\u63d0\u53d6\u51fa\u7684\u8bc1\u4e66\u4ee5 PEM \u6587\u672c\u683c\u5f0f\u5199\u5165\u4e34\u65f6\u6587\u4ef6\n236 \n237         # \u53e3\u4ee4\u6821\u9a8c\uff1a\u975e\u7a7a\u3001\u2264128 \u5b57\u7b26\u3001\u4e0d\u4ee5 - \u5f00\u5934\u3001\u4ec5\u5141\u8bb8\u5b89\u5168\u5b57\u7b26\n238         # \uff08\u4e0d\u5408\u6cd5\u65f6\u629b ValueError\uff0c\u4e0e\u4e0b\u65b9\u53e3\u4ee4\u9519\u8bef\u7684\u5f02\u5e38\u7c7b\u578b\u4fdd\u6301\u4e00\u81f4\uff09\n239         validate_secret(password, 'PFX \u53e3\u4ee4')\n240 \n241         try:\n242             run_openssl(\n243                 [\n244                     'pkcs12',\n245                     '-in', pfx_path,\n246                     '-nokeys', '-clcerts',\n247                     '-passin', 'stdin',  # \u2190 \u53e3\u4ee4\u4ece stdin \u8bfb\uff0c\u4e0d\u8fdb\u547d\u4ee4\u884c\n248                     '-out', cert_path,\n249                 ],\n250                 stdin_data=password + '\\n',\n251             )\n252         except OpenSSLError as e:\n253             raise ValueError(f'\u4ece PFX \u63d0\u53d6\u8bc1\u4e66\u5931\u8d25: {e}')\n254 \n255         # \u8bfb\u53d6\u5e76\u8fd4\u56de PEM \u8bc1\u4e66\u5b57\u8282\u6d41\n256         with open(cert_path, 'rb') as f:\n257             return f.read()\n258     finally:\n259         Path(pfx_path).unlink(missing_ok=True)\n260         Path(cert_path).unlink(missing_ok=True)\n261 \n",
       "col_offset": 0,
       "end_col_offset": 47,
       "filename": ".\\app\\utils\\ca_client_crt_yanzheng.py",
@@ -1602,12 +912,8 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Possible hardcoded password: '123456'",
-      "line_number": 216,
+      "line_number": 220,
       "line_range": [
-        216,
-        217,
-        218,
-        219,
         220,
         221,
         222,
@@ -1635,77 +941,24 @@
         244,
         245,
         246,
-        247
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255,
+        256,
+        257,
+        258,
+        259,
+        260
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b107_hardcoded_password_default.html",
       "test_id": "B107",
       "test_name": "hardcoded_password_default"
-    },
-    {
-      "code": "238         ]\n239         subprocess.run(cmd, capture_output=True, check=True, text=True)\n240         # \u8bfb\u53d6\u5e76\u8fd4\u56de PEM \u8bc1\u4e66\u5b57\u8282\u6d41\n",
-      "col_offset": 8,
-      "end_col_offset": 71,
-      "filename": ".\\app\\utils\\ca_client_crt_yanzheng.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 239,
-      "line_range": [
-        239
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
-    },
-    {
-      "code": "272         # \u2014\u2014 \u53ea\u8f93\u51fa\u8bc1\u4e66\u6307\u7eb9(\u4e0d\u8f93\u51fa\u8bc1\u4e66\u5168\u6587)\uff0c-sha256 \u6307\u5b9a\u6307\u7eb9\u6458\u8981\u7b97\u6cd5\u4e3a SHA-256\n273         result = subprocess.run([\n274             'openssl', 'x509', '-in', cert_path,\n275             '-fingerprint', '-sha256', '-noout'\n276         ], capture_output=True, text=True)\n277 \n",
-      "col_offset": 17,
-      "end_col_offset": 42,
-      "filename": ".\\app\\utils\\ca_client_crt_yanzheng.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Starting a process with a partial executable path",
-      "line_number": 273,
-      "line_range": [
-        273,
-        274,
-        275,
-        276
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
-      "test_id": "B607",
-      "test_name": "start_process_with_partial_path"
-    },
-    {
-      "code": "272         # \u2014\u2014 \u53ea\u8f93\u51fa\u8bc1\u4e66\u6307\u7eb9(\u4e0d\u8f93\u51fa\u8bc1\u4e66\u5168\u6587)\uff0c-sha256 \u6307\u5b9a\u6307\u7eb9\u6458\u8981\u7b97\u6cd5\u4e3a SHA-256\n273         result = subprocess.run([\n274             'openssl', 'x509', '-in', cert_path,\n275             '-fingerprint', '-sha256', '-noout'\n276         ], capture_output=True, text=True)\n277 \n",
-      "col_offset": 17,
-      "end_col_offset": 42,
-      "filename": ".\\app\\utils\\ca_client_crt_yanzheng.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 78,
-        "link": "https://cwe.mitre.org/data/definitions/78.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 273,
-      "line_range": [
-        273,
-        274,
-        275,
-        276
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
-      "test_id": "B603",
-      "test_name": "subprocess_without_shell_equals_true"
     },
     {
       "code": "19     \"\"\"\u751f\u6210\u968f\u673a\u9a8c\u8bc1\u7801\"\"\"\n20     verification_code = ''.join(random.choices(string.digits, k=length))\n21     return verification_code\n",
@@ -1747,6 +1000,54 @@
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b110_try_except_pass.html",
       "test_id": "B110",
       "test_name": "try_except_pass"
+    },
+    {
+      "code": "12 import shutil\n13 import subprocess\n14 \n",
+      "col_offset": 0,
+      "end_col_offset": 17,
+      "filename": ".\\app\\utils\\openssl_runner.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Consider possible security implications associated with the subprocess module.",
+      "line_number": 13,
+      "line_range": [
+        13
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
+      "test_id": "B404",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "112             timeout=timeout,\n113             shell=False,      # \u663e\u5f0f\u58f0\u660e\uff0c\u9632\u6b62\u65e5\u540e\u88ab\u6539\u6210 True\n114             env=env,\n115         )\n116     except subprocess.TimeoutExpired:\n117         raise OpenSSLError(f'OpenSSL \u6267\u884c\u8d85\u65f6\uff08{timeout}s\uff09\uff1a{args[0]}')\n118     except FileNotFoundError:\n119         raise OpenSSLError(f'\u627e\u4e0d\u5230 OpenSSL \u53ef\u6267\u884c\u6587\u4ef6\uff1a{cmd[0]}')\n120     except OSError as e:\n121         raise OpenSSLError(f'OpenSSL \u542f\u52a8\u5931\u8d25\uff1a{e}')\n122 \n",
+      "col_offset": 17,
+      "end_col_offset": 9,
+      "filename": ".\\app\\utils\\openssl_runner.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "subprocess call - check for execution of untrusted input.",
+      "line_number": 113,
+      "line_range": [
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
+      "test_id": "B603",
+      "test_name": "subprocess_without_shell_equals_true"
     },
     {
       "code": "242     expect = '38601c5b95f1c60be75f7e103a0e0a74'\n243     assert ct.hex() == expect, f'SM4 \u5411\u91cf\u4e0d\u7b26\uff1a{ct.hex()}'\n244     assert SM4.sm4_decrypt_raw(key, iv, ct) == plain\n",

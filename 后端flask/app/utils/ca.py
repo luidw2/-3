@@ -15,7 +15,7 @@ ca.py —— 自建 CA（证书颁发机构）初始化模块
 from flask import Blueprint, request, jsonify, send_file
 from datetime import datetime, UTC, timedelta
 import os
-import subprocess
+from .openssl_runner import run_openssl, OpenSSLError
 # 确保certificates目录存在
 
 # 证书目录以本文件位置为基准：app/utils/ 的上级是 app/。
@@ -71,10 +71,10 @@ def generate_rootCA():
         # 实际执行上面的 openssl ecparam 命令：
         # openssl ecparam -name SM2 -genkey -out ca_sm2.key
         # —— 生成国密 SM2 椭圆曲线密钥对并写入私钥文件（CA 私钥，需妥善保管）
-        subprocess.run([
-            'openssl','ecparam','-name','SM2','-genkey','-out', ca_sm2_key_path
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        run_openssl([
+            'ecparam','-name','SM2','-genkey','-out', ca_sm2_key_path
+        ])
+    except OpenSSLError as e:
         print(f"命令失败{e}")
     '''
     2. 生成根CA证书（自签名）
@@ -89,12 +89,12 @@ def generate_rootCA():
         #    -x509：直接输出自签名证书(而非 CSR)；-nodes：私钥不加密；
         #    -days 3650：有效期 10 年；-subj：证书主体信息(国家/省份/城市/机构/CN)；
         #    -sm3：使用国密摘要算法 SM3（与 SM2 配套组成国密体系）
-        subprocess.run([
-            'openssl','req', '-x509','-new','-nodes','-key',ca_sm2_key_path,
+        run_openssl([
+            'req', '-x509','-new','-nodes','-key',ca_sm2_key_path,
             '-days','3650','-out',ca_sm2_cert_path, '-subj',
             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA','-sm3'
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        ])
+    except OpenSSLError as e:
         print(f"{e}")
 
 # 生成“服务端证书”全套材料（RSA 体系，与客户端证书使用的 SM2 体系分开维护）：
@@ -112,10 +112,10 @@ def generate_serverCA():
     try:
         # 实际执行 openssl genrsa -out ca_rsa.key 4096
         # —— 生成 4096 位 RSA 私钥（作为 RSA CA 的私钥）
-        subprocess.run([
-            'openssl','genrsa','-out', ca_rsa_key_path,'4096'
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        run_openssl([
+            'genrsa','-out', ca_rsa_key_path,'4096'
+        ])
+    except OpenSSLError as e:
         print(f"命令失败{e}")
 
     '''
@@ -129,12 +129,12 @@ def generate_serverCA():
         # 实际执行 openssl req -x509 ... -sha256：
         # —— 用 RSA CA 私钥自签名生成根证书 ca_rsa.crt（-sha256 摘要，有效期 3650 天，
         #    主体信息与 SM2 根证书保持一致：MySecureECommerceCA）
-        subprocess.run([
-            'openssl','req', '-x509','-new','-nodes','-key',ca_rsa_key_path,
+        run_openssl([
+            'req', '-x509','-new','-nodes','-key',ca_rsa_key_path,
             '-sha256','-days','3650','-out',ca_rsa_cert_path,'-subj',
             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=MySecureECommerceCA'
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        ])
+    except OpenSSLError as e:
         print(f"{e}")
 
     '''
@@ -144,10 +144,10 @@ def generate_serverCA():
     try:
         # 实际执行 openssl genrsa -out server.key 2048
         # —— 生成服务端 RSA 私钥（2048 位，供 HTTPS 服务端证书使用）
-        subprocess.run([
-            'openssl', 'genrsa', '-out',server_key_path, '2048'
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        run_openssl([
+            'genrsa', '-out',server_key_path, '2048'
+        ])
+    except OpenSSLError as e:
         print(f"{e}")
     '''
      4.生成服务端CSR
@@ -158,12 +158,12 @@ def generate_serverCA():
         # 实际执行 openssl req -new ...：
         # —— 用服务端私钥生成“证书签名请求”(CSR)：请求内含公钥与主体信息，
         #    主体 CN=localhost（本机部署场景，服务端证书 CN 使用 localhost）
-        subprocess.run([
-            'openssl', 'req', '-new','-key', server_key_path,
+        run_openssl([
+            'req', '-new','-key', server_key_path,
             '-out', server_csr_path, '-subj',
             '/C=CN/ST=Sichuan/L=Chengdu/O=UESTC/CN=localhost'
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        ])
+    except OpenSSLError as e:
         print(f"{e}")
     '''
     5.创建服务端扩展配置文件 server_ext.cnf
@@ -221,14 +221,14 @@ subjectAltName = DNS:localhost, IP:127.0.0.1
         #   -days 365 / -sha256     ：证书有效期与摘要算法；
         #   -extfile/-extensions v3_req：附加上面步骤 5 的扩展配置(用途 / SAN 等)。
         # 签发完成后 server.key + server.crt 即为服务端可用的 HTTPS 证书对。
-        subprocess.run([
-        'openssl', 'x509', '-req' ,'-in',server_csr_path,
+        run_openssl([
+        'x509', '-req' ,'-in',server_csr_path,
         '-CA', ca_rsa_cert_path,
         '-CAkey', ca_rsa_key_path,
         '-CAcreateserial','-out',server_cert_path,'-days', '365' ,'-sha256' ,
         '-extfile', server_ext_cnf_path, '-extensions','v3_req'
-        ], check=True)
-    except subprocess.CalledProcessError as e:
+        ])
+    except OpenSSLError as e:
         print(f"{e}")
 
 # 直接运行本文件时：先初始化 SM2 根 CA，再生成 RSA 服务端证书全套材料

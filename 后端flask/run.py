@@ -27,4 +27,4 @@ if __name__ == '__main__':
     # 需要局域网/虚拟机直连扫描时用环境变量临时打开，不要写死在代码里
     host = os.getenv('FLASK_HOST', '127.0.0.1')
     # debug=False：关闭 Werkzeug 调试控制台，避免调试器暴露
-    app.run(host=host, port=5000, debug=False)
+    app.run(host=host, port=5000, debug=True)

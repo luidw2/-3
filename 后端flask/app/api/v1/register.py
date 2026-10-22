@@ -24,6 +24,7 @@
 # ============================================================================
 from flask import Blueprint, request, jsonify, send_file
 import io
+import re
 from datetime import datetime
 from config.ca_path import ca_sm2_key_path, client_ext_cnf_test_path, ca_sm2_cert_path
 
@@ -95,6 +96,25 @@ def register():
             code=400,
             error='参数缺失',
             message='邮箱、用户名、密码和验证码均为必填项',
+            status=400
+        )
+
+    # 证书口令格式校验（安全用途，与 openssl_runner.validate_secret 规则一致）：
+    #   PFX 口令最终会交给 openssl pkcs12 使用，这里在入口先拦一道，
+    #   避免畸形输入（以 - 开头 / 含控制字符或空格引号等）进入子进程参数，
+    #   同时给出 400 而不是等到深层调用抛异常变成 500。
+    if len(pfx_password) > 128:
+        return build_response(
+            code=400,
+            error='参数非法',
+            message='证书口令长度不能超过 128 个字符',
+            status=400
+        )
+    if pfx_password.startswith('-') or not re.match(r'^[A-Za-z0-9_\-.,:@#!*+=]+$', pfx_password):
+        return build_response(
+            code=400,
+            error='参数非法',
+            message='证书口令含非法字符，仅允许字母、数字和 _-.,:@#!*+=',
             status=400
         )
 
