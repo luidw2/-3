@@ -1,5 +1,0 @@
-timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
-1792655595740,22625865728000,127.0.0.1 Memory used,,,,,true,,0,0,0,0,null,0,0,0
-1792655595740,8270,127.0.0.1 CPU combined,,,,,true,,0,0,0,0,null,0,0,0
-1792655596746,22525587456000,127.0.0.1 Memory used,,,,,true,,0,0,0,0,null,0,0,0
-1792655596746,72672,127.0.0.1 CPU combined,,,,,true,,0,0,0,0,null,0,0,0
