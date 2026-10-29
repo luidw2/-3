@@ -1,0 +1,19 @@
+{
+  "sha256": "99c0aa8d5dab9d42d7fb509c12fc67b15003ff3a2869e1549dc54a39119e0b97",
+  "counts": {
+    "cart": 20,
+    "cart_item": 0,
+    "order": 0,
+    "order_item": 0,
+    "product": 100,
+    "question_tags": 0,
+    "questions": 0,
+    "refresh_token": 40,
+    "security_event": 40,
+    "seller": 1,
+    "staff": 0,
+    "tags": 0,
+    "user": 20,
+    "user_certificate": 0
+  }
+}

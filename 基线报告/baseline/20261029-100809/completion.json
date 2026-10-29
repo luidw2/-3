@@ -1,0 +1,8 @@
+{
+  "status": "complete",
+  "finished_at": "2026-10-29T10:19:35.911523+08:00",
+  "runs": 9,
+  "business_samples": 360,
+  "code_unchanged": true,
+  "original_database": "not modified; dedicated perf9_baseline used"
+}

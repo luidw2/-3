@@ -1,0 +1,43 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1793239766981,587,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-1,text,true,,0,0,2,2,null,0,0,0
+1793239767476,91,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-2,text,true,,0,0,2,2,null,0,0,0
+1793239769922,272,business-login,200,OK,isolated-users 1-2,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,268,0,22
+1793239769922,272,business-login,200,OK,isolated-users 1-1,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,268,0,22
+1793239771824,278,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,277,0,1
+1793239771824,278,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,277,0,1
+1793239773613,231,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,231,0,0
+1793239773613,249,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,249,0,0
+1793239775365,226,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,226,0,1
+1793239775381,232,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,232,0,1
+1793239777109,232,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,232,0,1
+1793239777124,235,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,235,0,1
+1793239778853,226,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,226,0,2
+1793239778869,229,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,229,0,1
+1793239780594,227,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,227,0,1
+1793239780610,229,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,229,0,0
+1793239782332,224,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239782363,225,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,225,0,0
+1793239784071,224,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239784102,225,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239785813,224,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239785844,229,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,229,0,1
+1793239787543,224,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239787589,232,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,232,0,1
+1793239789288,225,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239789336,231,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,231,0,1
+1793239791031,223,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,1
+1793239791079,227,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,227,0,1
+1793239792760,223,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,1
+1793239792822,225,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239794501,223,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,1
+1793239794563,224,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239796231,223,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,0
+1793239796294,223,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,1
+1793239797960,225,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,225,0,1
+1793239798024,224,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,1
+1793239799695,225,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239799758,223,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,1
+1793239801439,224,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,223,0,0
+1793239801500,230,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,230,0,1
+1793239803169,224,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,224,0,1
+1793239803247,233,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,1,1,http://127.0.0.1:5001/user/login,233,0,1

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "purpose": "Empty cart with HTTP 200 / business 400 must fail the business assertion; this deliberate negative case is outside baseline error statistics",
+  "observed": {
+    "http_status": "200",
+    "business_code": 400
+  },
+  "expected_assertion_failures": 1
+}

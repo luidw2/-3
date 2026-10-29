@@ -53,3 +53,6 @@ config.local.py
 
 # 证书签发过程产生的状态文件
 *.srl
+
+# 本机性能测试凭据、运行输出和工具配置
+performance/.local/

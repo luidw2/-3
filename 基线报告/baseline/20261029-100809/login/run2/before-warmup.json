@@ -1,0 +1,21 @@
+{
+  "database": "perf9_baseline",
+  "sha256": "2ac71f208feacab8dd6fca225f1818698ad46d6879e710a76bb647640c59b100",
+  "counts": {
+    "cart": 20,
+    "cart_item": 0,
+    "order": 0,
+    "order_item": 0,
+    "product": 100,
+    "question_tags": 0,
+    "questions": 0,
+    "refresh_token": 0,
+    "security_event": 0,
+    "seller": 1,
+    "staff": 0,
+    "tags": 0,
+    "user": 20,
+    "user_certificate": 0
+  },
+  "matches_snapshot": true
+}

@@ -1,0 +1,11 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1793239965035,563,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-1,text,true,,0,0,2,2,null,0,0,0
+1793239965532,66,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-2,text,true,,0,0,2,2,null,0,0,0
+1793239966439,277,prepare-login,200,OK,isolated-users 1-1,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,273,0,22
+1793239966439,277,prepare-login,200,OK,isolated-users 1-2,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,273,0,22
+1793239968345,11,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239968345,11,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,11,0,1
+1793239969873,9,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239969873,9,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239971385,8,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,8,0,1
+1793239971385,9,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1

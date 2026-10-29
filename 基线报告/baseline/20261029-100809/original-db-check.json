@@ -1,0 +1,21 @@
+{
+  "scope": "existing business database, read-only verification",
+  "sha256": "42c6ad78364e72a4bbacb7c2a15fe589a8f8385a2fb76465b1776e2cfb0f84f9",
+  "counts": {
+    "cart": 22,
+    "cart_item": 0,
+    "order": 18,
+    "order_item": 18,
+    "product": 101,
+    "question_tags": 0,
+    "questions": 4,
+    "refresh_token": 33,
+    "security_event": 852,
+    "seller": 3,
+    "staff": 2,
+    "tags": 0,
+    "user": 26,
+    "user_certificate": 4
+  },
+  "unchanged_at_completion": true
+}

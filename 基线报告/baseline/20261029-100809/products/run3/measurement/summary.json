@@ -1,0 +1,63 @@
+{
+  "scenario": "products",
+  "threads": 2,
+  "loops": 20,
+  "business_samples": 40,
+  "all_samples": 44,
+  "all_failures": 0,
+  "p95_ms": 12.0,
+  "throughput_rps": 1.3838915029061722,
+  "error_pct": 0.0,
+  "business_window_seconds": 28.904,
+  "monitor_samples": 28,
+  "resources": {
+    "system_cpu_pct": {
+      "mean": 11.946428571428571,
+      "max": 18.7
+    },
+    "system_memory_pct": {
+      "mean": 74.87857142857143,
+      "max": 75.8
+    },
+    "system_used_mib": {
+      "mean": 12029.089425223214,
+      "max": 12182.640625
+    },
+    "backend_cpu_pct_one_core": {
+      "mean": 0.8071428571428572,
+      "max": 3.1
+    },
+    "backend_cpu_pct_host": {
+      "mean": 0.025223214285714286,
+      "max": 0.096875
+    },
+    "backend_rss_mib": {
+      "mean": 70.814453125,
+      "max": 70.83984375
+    },
+    "mysql_cpu_pct_one_core": {
+      "mean": 0.5928571428571429,
+      "max": 3.1
+    },
+    "mysql_cpu_pct_host": {
+      "mean": 0.018526785714285714,
+      "max": 0.096875
+    },
+    "mysql_rss_mib": {
+      "mean": 154.25181361607142,
+      "max": 154.27734375
+    },
+    "jmeter_cpu_pct_one_core": {
+      "mean": 0.9857142857142858,
+      "max": 10.8
+    },
+    "jmeter_cpu_pct_host": {
+      "mean": 0.03080357142857143,
+      "max": 0.3375
+    },
+    "jmeter_rss_mib": {
+      "mean": 268.60756138392856,
+      "max": 270.17578125
+    }
+  }
+}

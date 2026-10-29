@@ -1,0 +1,9 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1793239809406,610,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-1,text,true,,0,0,2,2,null,0,0,0
+1793239809899,117,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-2,text,true,,0,0,2,2,null,0,0,0
+1793239812395,278,business-login,200,OK,isolated-users 1-1,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,273,0,21
+1793239812395,278,business-login,200,OK,isolated-users 1-2,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,273,0,21
+1793239814294,247,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,247,0,1
+1793239814294,247,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,247,0,1
+1793239816050,246,business-login,200,OK,isolated-users 1-1,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,246,0,1
+1793239816050,246,business-login,200,OK,isolated-users 1-2,text,true,,1794,955,2,2,http://127.0.0.1:5001/user/login,246,0,1

@@ -1,0 +1,45 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1793239876266,580,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-1,text,true,,0,0,2,2,null,0,0,0
+1793239876762,84,prepare-fixture,200,Dedicated fixture assigned,isolated-users 1-2,text,true,,0,0,2,2,null,0,0,0
+1793239877740,271,prepare-login,200,OK,isolated-users 1-2,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,271,0,20
+1793239877740,262,prepare-login,200,OK,isolated-users 1-1,text,true,,1794,679,2,2,http://127.0.0.1:5001/user/login,258,0,20
+1793239879619,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,2
+1793239879619,11,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,11,0,2
+1793239881139,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239881139,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239882664,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239882664,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239884182,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239884182,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239885708,12,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,12,0,1
+1793239885708,12,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,12,0,1
+1793239887226,9,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239887226,9,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239888737,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239888737,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239890260,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239890260,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239891786,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,0
+1793239891786,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,0
+1793239893310,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239893310,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239894829,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239894829,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239896349,9,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239896349,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239897873,9,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239897873,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239899399,9,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239899399,8,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,8,0,1
+1793239900920,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239900920,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239902443,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239902443,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239903966,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239903966,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239905491,10,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239905491,10,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,10,0,1
+1793239907017,11,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,11,0,1
+1793239907017,11,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,11,0,1
+1793239908541,9,business-products,200,OK,isolated-users 1-2,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,9,0,1
+1793239908541,9,business-products,200,OK,isolated-users 1-1,text,true,,5900,510,2,2,http://127.0.0.1:5001/user/products/profile?page=1&size=20&keyword=perf9_product_,8,0,1

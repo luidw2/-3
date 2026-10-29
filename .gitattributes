@@ -1,0 +1,7 @@
+# Preserve raw benchmark evidence and the bytes recorded in source manifests.
+performance/** -text whitespace=cr-at-eol
+基线报告/baseline/** -text -diff
+基线报告/登录接口基线测试文件/Test_user_login.jmx -text whitespace=cr-at-eol
+基线报告/商品查看接口基线测试文件/Test_user_product_profile.jmx -text whitespace=cr-at-eol
+基线报告/下单接口基线测试文件/Test_user_order.jmx -text whitespace=cr-at-eol
+后端flask/run.py -text whitespace=cr-at-eol
