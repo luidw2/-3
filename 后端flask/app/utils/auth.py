@@ -120,6 +120,18 @@ def generate_refresh_token(user_or_seller):
     return token
 
 
+# 生成“刷新令牌”的随机串与过期时间（只计算、不写数据库）：
+# 作用：供登录成功路径把 refresh_token 的数据库写入与其它写操作合并到
+#       同一个事务里（减少每请求的数据库会话/提交次数，属性能优化）。
+# 说明：原 generate_refresh_token() 保留原有“生成即入库”的行为，
+#       证书登录等既有调用方不受影响。
+def generate_refresh_token_value(user_or_seller):
+    now = _now_utc()
+    exp = now + timedelta(days=REFRESH_TOKEN_TTL_DAYS)
+    token = secrets.token_urlsafe(48)
+    return token, exp.replace(tzinfo=None)
+
+
 # 校验“访问令牌”：
 # 作用：解码并验签前端传来的 JWT，同时强制要求令牌类型为 access。
 # 参数：token —— 待校验的 JWT 字符串

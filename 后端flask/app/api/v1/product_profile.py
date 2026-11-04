@@ -28,6 +28,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, request, g, jsonify
 from app.middleware import jwt_auth_required, seller_required,user_required
 from app.utils import db
+from app.utils.hot_cache import PRODUCT_LIST_CACHE
 
 user = Blueprint('product', __name__)
 
@@ -182,45 +183,54 @@ def get_all_products():
         if per_page < 1 or per_page > 100:
             per_page = 20
 
-        # 调用数据库分页查询函数查询全部商品（支持状态、卖家、关键词过滤）；
-        # 返回结构与商家接口一致：items/total/page/per_page/pages。
-        # 下方循环随后把 items 逐条格式化为字典，再组装成上方的分页响应
-        result = db.get_all_products_paginated(
-            page=page,
-            per_page=per_page,
-            status=status,
-            seller_id=seller_id,
-            name_keyword=keyword
-        )
+        # 性能优化（第8-9周）：热点商品列表缓存。
+        # 商品浏览页是最典型的"热点读"：大量用户/压测线程反复访问相同的分页 URL。
+        # 命中缓存时直接返回已序列化好的 data，跳过"ORM 查询 + 逐条序列化"整条链路；
+        # 未命中时才查库并回填缓存。TTL 默认 5 秒（PRODUCT_CACHE_TTL 可覆盖），
+        # 代价是列表数据最多滞后 TTL 秒（商品列表非强一致数据，可接受）。
+        cache_key = (page, per_page, status, seller_id, keyword)
+        payload = PRODUCT_LIST_CACHE.get(cache_key)
 
-        items_data = []
-        for product in result['items']:
-            items_data.append({
-                'id': product.id,
-                'name': product.name,
-                'description': product.description,
-                'price': product.price,
-                'status': product.status,
-                'seller_id': product.seller_id,
-                'seller_name': product.seller.username if product.seller else '未知商家',
-                'image_url': product.image_url,
-                'created_at': product.created_at.isoformat() if product.created_at else None,
-                'updated_at': product.updated_at.isoformat() if product.updated_at else None
-            })
+        if payload is None:
+            # 调用数据库分页查询函数查询全部商品（支持状态、卖家、关键词过滤）；
+            # 返回结构与商家接口一致：items/total/page/per_page/pages。
+            result = db.get_all_products_paginated(
+                page=page,
+                per_page=per_page,
+                status=status,
+                seller_id=seller_id,
+                name_keyword=keyword
+            )
 
-        # 业务成功：code=0；data 内为分页返回结构——
-        # items 当前页商品列表、total 总条数、page 当前页码、
-        # size 每页条数、pages 总页数
-        return build_response(
-            code=0,
-            message='查询成功',
-            data={
+            items_data = []
+            for product in result['items']:
+                items_data.append({
+                    'id': product.id,
+                    'name': product.name,
+                    'description': product.description,
+                    'price': product.price,
+                    'status': product.status,
+                    'seller_id': product.seller_id,
+                    'seller_name': product.seller.username if product.seller else '未知商家',
+                    'image_url': product.image_url,
+                    'created_at': product.created_at.isoformat() if product.created_at else None,
+                    'updated_at': product.updated_at.isoformat() if product.updated_at else None
+                })
+
+            payload = {
                 'items': items_data,
                 'total': result['total'],
                 'page': result['page'],
                 'size': result['per_page'],
                 'pages': result['pages']
             }
+            PRODUCT_LIST_CACHE.set(cache_key, payload)
+
+        # 业务成功：code=0；data 为分页返回结构（缓存命中时直接复用上次结果）
+        return build_response(
+            code=0,
+            message='查询成功',
+            data=payload
         )
 
     except Exception as e:
