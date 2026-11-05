@@ -13,8 +13,10 @@
 #   4) JWT 双令牌签发（auth.generate_access_token / generate_refresh_token）。
 # 调用的工具函数：
 #   db.get_user_by_username / db.get_seller_by_seller_name（普通用户与商家两表查找）、
-#   db.is_user_locked / db.record_failed_login / db.reset_failed_login、
-#   my_bcrypt.compare_password、auth.generate_access_token / auth.generate_refresh_token。
+#   db.is_user_locked / db.record_failed_login、
+#   db.complete_login_success（性能优化：条件重置失败计数 + 单事务写 refresh_token 与审计）、
+#   my_bcrypt.compare_password、
+#   auth.generate_access_token / auth.generate_refresh_token_value（只生成不落库）。
 # ============================================================================
 from flask import Blueprint, request, jsonify
 from datetime import datetime
@@ -139,16 +141,21 @@ def login():
     # —— 第二步：密码校验与令牌签发 ——
     # Bcrypt 哈希比对：以输入密码计算后与库中哈希比较，一致即通过
     if my_bcrypt.compare_password(user_.password, password):
-        # 登录成功：清零历史失败次数（解除失败记录与锁定标记）
-        db.reset_failed_login(user_)
-        # 签发 JWT 双令牌：access_token 供业务接口鉴权，refresh_token 用于
-        # 过期后换新；密码登录无证书，证书指纹参数传 None
-        #（"证书 + 令牌"绑定的证书登录见 cert_login.py 模块）
+        # 登录成功（性能优化，第8-9周）：
+        #   1) access_token / refresh_token 只做纯计算，不再各自触发数据库操作；
+        #   2) “写 refresh_token + 写登录成功审计”合并为一次数据库事务；
+        #   3) “重置失败计数”改为条件短事务：仅当确有失败记录/锁定标记时才加行锁更新，
+        #      正常登录不碰 user 行锁（单账号并发压测时避免锁排队）。
+        #   安全语义不变：refresh_token 仍同步落库、审计事件仍与业务同事务提交。
         access = auth.generate_access_token(user_, None)
-        refresh = auth.generate_refresh_token(user_)
-        # 审计留痕：前台账号登录成功（记录账号、角色与账号ID）
-        db.log_security_event('USER_LOGIN_OK', user_.username,
-                              f'前台账号登录成功 (role={actual_role}, id={user_id})')
+        refresh, refresh_exp = auth.generate_refresh_token_value(user_)
+        # need_reset 来自前面已查到的用户字段：正常登录（0 次失败、未锁定）不进入行锁分支，
+        # 避免同一账号并发登录时在 user 行锁上排队（压测实测：单账号 20 并发时这一步很关键）。
+        need_reset = bool(getattr(user_, 'failed_attempts', 0) or getattr(user_, 'lock_until', None))
+        db.complete_login_success(
+            user_, refresh, refresh_exp,
+            f'前台账号登录成功 (role={actual_role}, id={user_id})',
+            need_reset=need_reset)
         return build_response(
             code=0,
             message='登录成功',

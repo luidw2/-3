@@ -90,11 +90,14 @@ database_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB
 
 # 创建数据库引擎[citation:3][citation:7]
 engine = create_engine(database_url,#连接池管理
-                       pool_size=10,  # 根据服务器负载调整[citation:7]
+                       pool_size=20,  # 性能优化：不小于最大并发线程数(20)，避免取连接排队
                        max_overflow=20,  # 应对突发流量[citation:7]
                        pool_recycle=1800,  # 回收时间小于数据库的wait_timeout[citation:1][citation:7]
                        pool_timeout=30,  # 避免长时间等待连接[citation:7]
-                       pool_pre_ping=True  # 确保连接有效[citation:1]
+                       # 性能优化：默认关闭每次取连接前的 "SELECT 1" 探测（本地 MySQL、
+                       # pool_recycle=1800 远小于 wait_timeout，断连风险低）。
+                       # 如部署环境网络不稳定，可设环境变量 DB_POOL_PRE_PING=1 恢复。
+                       pool_pre_ping=os.getenv('DB_POOL_PRE_PING', '0') == '1'
                        )
 
 # 定义一个数据模型类，对应数据库中的 'users' 表
@@ -1354,6 +1357,57 @@ def create_refresh_token(user_id=None, seller_id=None, token=None, expires_at=No
 
 
 # ============================================================
+# 登录成功后的写操作合并（性能优化，第8-9周）
+# 作用：把原先登录成功时分散的数据库写操作压缩为：
+#   1) 仅当确有失败记录/锁定标记时，才用一个“短事务 + 行锁”重置计数
+#      （正常登录完全跳过，避免同一账号并发登录时争抢 user 行锁）；
+#   2) 写入 refresh_token 与 USER_LOGIN_OK 审计事件（无行锁、同事务提交，
+#      保证“令牌发了 → 库里一定有记录、审计不丢”）。
+# 参数：user —— 登录成功的 User / Seller 对象（只用其 id / role / username）；
+#       refresh_token —— 已生成好的刷新令牌串；
+#       expires_at —— 刷新令牌过期时间（naive datetime）；
+#       event_details —— 审计事件描述文本；
+#       need_reset —— 是否需要重置失败计数（由调用方根据已读到的用户字段判断）。
+# 返回：True；数据库异常时 rollback 并向上抛出（调用方返回 500）。
+# ============================================================
+def complete_login_success(user, refresh_token, expires_at, event_details, need_reset=False):
+    is_seller = getattr(user, 'role', '') == 'seller'
+    model = Seller if is_seller else User
+    # ---------- 第一步（仅必要时）：短事务重置失败计数，行锁持有时间最短 ----------
+    if need_reset:
+        with Session() as session:
+            try:
+                db_user = session.query(model).filter_by(id=user.id).with_for_update().one()
+                db_user.failed_attempts = 0
+                db_user.lock_until = None
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                print(f"重置登录失败计数失败: {e}")
+                raise
+    # ---------- 第二步：写 refresh_token + 审计（无行锁，单事务提交） ----------
+    with Session() as session:
+        try:
+            session.add(RefreshToken(
+                user_id=None if is_seller else user.id,
+                seller_id=user.id if is_seller else None,
+                token=refresh_token,
+                expires_at=expires_at,
+            ))
+            session.add(SecurityEvent(
+                event_type='USER_LOGIN_OK',
+                username=user.username,
+                details=event_details,
+            ))
+            session.commit()
+            return True
+        except Exception as e:
+            session.rollback()
+            print(f"合并写入登录成功记录失败: {e}")
+            raise
+
+
+# ============================================================
 # 吊销单个刷新令牌（退出登录时调用）
 # 作用：把指定 token 记录的 revoked 置为 True（软删除，不物理删除，保留审计线索），
 #       之后该令牌便不能再用于刷新 access token。
@@ -1820,20 +1874,25 @@ def get_all_products_paginated(
     """
     with Session() as session:
         try:
-            query = session.query(Product).options(joinedload(Product.seller))
-
+            # 性能优化：过滤条件先收集成列表，COUNT 与分页查询复用同一组条件；
+            # COUNT 使用独立的 COUNT(id) 查询（避免对带 joinedload 的 ORM 查询再做
+            # 子查询计数），分页查询保留 joinedload 预加载卖家，避免 N+1。
+            filters = []
             if status:
-                query = query.filter(Product.status == status)
+                filters.append(Product.status == status)
             if seller_id is not None:
-                query = query.filter(Product.seller_id == seller_id)
+                filters.append(Product.seller_id == seller_id)
             if name_keyword:
-                query = query.filter(Product.name.like(f'%{name_keyword}%'))
+                filters.append(Product.name.like(f'%{name_keyword}%'))
 
-            total = query.count()
-            items = query.order_by(Product.created_at.desc()) \
-                         .offset((page - 1) * per_page) \
-                         .limit(per_page) \
-                         .all()
+            total = session.query(func.count(Product.id)).filter(*filters).scalar() or 0
+            items = (session.query(Product)
+                     .options(joinedload(Product.seller))
+                     .filter(*filters)
+                     .order_by(Product.created_at.desc())
+                     .offset((page - 1) * per_page)
+                     .limit(per_page)
+                     .all())
 
             return {
                 'items': items,

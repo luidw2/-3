@@ -38,6 +38,18 @@ LOG_FILE = os.path.join(LOG_DIR, 'backend.log')
 _LOG_FORMAT = '%(asctime)s | %(levelname)-7s | %(name)s | %(message)s'
 _DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
+# -----------------------------------------------------------------------------
+# 性能优化开关（第8-9周：性能基线优化）
+#   1) 控制台默认只输出 WARNING 及以上：INFO 级的逐请求日志只写文件，
+#      避免每请求同步写控制台并在多线程下争抢 logging 锁；
+#   2) werkzeug 自带的逐请求访问日志默认关闭：访问证据由本文件末尾的
+#      REQ 日志（写入 backend.log）承担，避免同一请求被记录两次。
+# 如需恢复开发期详细控制台输出：设置环境变量 LOG_CONSOLE_LEVEL=INFO、
+# LOG_WERKZEUG_LEVEL=INFO 再启动即可（无需改代码）。
+# -----------------------------------------------------------------------------
+_CONSOLE_LEVEL = os.getenv('LOG_CONSOLE_LEVEL', 'WARNING').upper()
+_WERKZEUG_LEVEL = os.getenv('LOG_WERKZEUG_LEVEL', 'WARNING').upper()
+
 
 def get_logger(name: str) -> logging.Logger:
     """获取（并惰性配置）名为 name 的应用日志器；控制台 + 滚动文件双输出"""
@@ -62,6 +74,8 @@ def _file_handler() -> logging.Handler:
 def _console_handler() -> logging.Handler:
     handler = logging.StreamHandler()
     handler.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
+    # 默认 WARNING：INFO 访问日志不再逐条刷控制台（可用 LOG_CONSOLE_LEVEL 覆盖）
+    handler.setLevel(getattr(logging, _CONSOLE_LEVEL, logging.WARNING))
     return handler
 
 
@@ -84,11 +98,12 @@ def setup_logging(app):
         app_log.addHandler(_console_handler())
         app_log.propagate = False
 
-    # werkzeug 访问日志：保留其默认控制台输出，同时追加到文件
+    # werkzeug 访问日志：默认降为 WARNING（不再每条请求写一行）；
+    # 需要排查时用环境变量 LOG_WERKZEUG_LEVEL=INFO 临时打开
     wz = logging.getLogger('werkzeug')
     if file_h not in wz.handlers:
         wz.addHandler(file_h)
-    wz.setLevel(logging.INFO)
+    wz.setLevel(getattr(logging, _WERKZEUG_LEVEL, logging.WARNING))
 
     # ---------- 请求级访问日志钩子 ----------
     @app.before_request

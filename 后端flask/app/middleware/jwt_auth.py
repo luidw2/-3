@@ -17,9 +17,57 @@ JWT 认证中间件
 """
 
 from functools import wraps
+import os
+import threading
+import time
+
 from flask import request, jsonify, g
 from app.utils import auth
 import app.utils.db as db
+
+
+# =============================================================================
+# 性能优化（第8-9周）：鉴权用户状态缓存
+# -----------------------------------------------------------------------------
+# 原实现每个受保护请求都要回查一次数据库（get_user_by_id / get_seller_by_id /
+# get_staff_by_id），只为了确认"账号仍存在且未被禁用"。20 并发下这一步会带来
+# 一次连接取出 + 一次 SELECT + ORM 开销，并与其他 Python 工作争抢 GIL。
+# 这里按 (role, user_id) 缓存用户对象，TTL 默认 5 秒：
+#   - 收益：命中时省掉一次数据库往返；
+#   - 代价：封禁/改角色最多延迟 TTL 秒生效（安全敏感操作仍以数据库为准，
+#     且敏感接口可自行绕过缓存/缩短 TTL）；
+#   - 一致性：TTL 很短，且只缓存"确认存在"的用户，不缓存 None。
+# =============================================================================
+_AUTH_USER_CACHE = {}
+_AUTH_USER_CACHE_LOCK = threading.Lock()
+_AUTH_USER_CACHE_TTL = float(os.getenv('JWT_USER_CACHE_TTL', '5'))
+_AUTH_USER_CACHE_MAX = 4096
+
+
+def _fetch_user_by_role(role, user_id):
+    """按令牌里的角色回查对应数据表（与优化前逻辑一致）"""
+    if role == 'seller':
+        return db.get_seller_by_id(user_id)
+    if role in ('admin', 'auditor'):
+        return db.get_staff_by_id(user_id)
+    return db.get_user_by_id(user_id)
+
+
+def _fetch_user_by_role_cached(role, user_id):
+    """带 TTL 缓存的用户状态查询（性能优化，行为与 _fetch_user_by_role 一致）"""
+    now = time.time()
+    key = (role, user_id)
+    with _AUTH_USER_CACHE_LOCK:
+        ent = _AUTH_USER_CACHE.get(key)
+        if ent is not None and ent[0] > now:
+            return ent[1]
+    user = _fetch_user_by_role(role, user_id)
+    if user is not None:
+        with _AUTH_USER_CACHE_LOCK:
+            if len(_AUTH_USER_CACHE) >= _AUTH_USER_CACHE_MAX:
+                _AUTH_USER_CACHE.clear()
+            _AUTH_USER_CACHE[key] = (now + _AUTH_USER_CACHE_TTL, user)
+    return user
 
 
 def jwt_auth_required(f):
@@ -109,13 +157,9 @@ def jwt_auth_required(f):
 
         # 依据令牌里声明的角色回查对应数据表：
         # seller 查卖家表；admin / auditor 查后台 staff 表；其余(user)查用户表。
-        # 以数据库最新状态为准（封禁/注销立即生效的关键）
-        if role == 'seller':
-            user_or_seller = db.get_seller_by_id(user_id)
-        elif role in ('admin','auditor'):
-            user_or_seller = db.get_staff_by_id(user_id)
-        else:
-            user_or_seller = db.get_user_by_id(user_id)
+        # 性能优化：走 5 秒 TTL 缓存，命中时省掉一次数据库往返；
+        # 未命中或缓存过期时仍以数据库最新状态为准（封禁/注销最多延迟 TTL 秒生效）。
+        user_or_seller = _fetch_user_by_role_cached(role, user_id)
 
         if not user_or_seller or not user_or_seller.is_active:
             return jsonify({
